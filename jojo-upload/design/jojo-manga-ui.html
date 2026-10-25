@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jojo — Manga Pack Station UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=Kanit:ital,wght@0,600;0,800;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#4b1f7a; --purple:#7b2fbf; --gold:#f2b705; --pink:#e8336f;
+  --ink:#1a1022; --white:#fffdf8; --muted:#655b68; --nav:#2e1150;
+  --line:2.5px solid var(--ink); --radius:8px; --shadow:4px 4px 0 var(--ink);
+  --ok:#104b2d; --ok-bg:#dff4e5; --bad:#a90f43; --bad-bg:#ffe0e9; --warn-bg:#ffe99b; --vio-bg:#ead8fa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#ddd3c4;color:var(--ink);font-family:"Anuphan","Kanit",Tahoma,sans-serif}
+h1,h2,h3,p{margin:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.board{padding:28px;max-width:1800px;margin:auto}
+.board-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:26px}
+.board-head h1{font-family:"Kanit",Tahoma,sans-serif;font-size:32px;font-weight:900;font-style:italic;letter-spacing:-1px}
+.board-head p{color:#4d4350;font-size:14px}
+.manga-label{display:inline-block;background:var(--purple);color:#fff;padding:4px 8px;font-size:11px;font-weight:900;transform:skew(-5deg);border:1.5px solid var(--ink)}
+.screens{display:grid;grid-template-columns:repeat(3,minmax(300px,390px));gap:28px;align-items:start;justify-content:center}
+.screen-label{font-weight:900;font-size:14px;margin:0 0 10px 4px}
+
+/* มือถือ + พื้นหลังม่วง→เหลือง ตารางขาว กลีบซากุระ */
+.phone{width:100%;max-width:390px;height:844px;border:3px solid var(--ink);border-radius:25px;box-shadow:8px 8px 0 #8d7d8b;overflow:hidden;position:relative;display:flex;flex-direction:column;background:
+  linear-gradient(90deg,rgba(255,255,255,.85) 0 5px,transparent 5px) -2px 0/58px 58px,
+  linear-gradient(rgba(255,255,255,.85) 0 5px,transparent 5px) 0 -2px/58px 58px,
+  linear-gradient(180deg,#c7a3ef 0%,#e2c3ee 38%,#fbe39a 75%,#f7cf5e 100%)}
+.phone:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.9;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'%3E%3Cdefs%3E%3Cg id='f'%3E%3Cg fill='%23f3d6d8' stroke='%23d8a7af' stroke-width='.8'%3E%3Cellipse cy='-9' rx='6' ry='9'/%3E%3Cellipse cy='-9' rx='6' ry='9' transform='rotate(72)'/%3E%3Cellipse cy='-9' rx='6' ry='9' transform='rotate(144)'/%3E%3Cellipse cy='-9' rx='6' ry='9' transform='rotate(216)'/%3E%3Cellipse cy='-9' rx='6' ry='9' transform='rotate(288)'/%3E%3C/g%3E%3Ccircle r='3' fill='%23d98f9d'/%3E%3C/g%3E%3C/defs%3E%3Cuse href='%23f' transform='translate(28 70) scale(1.7) rotate(15)'/%3E%3Cuse href='%23f' transform='translate(360 150) scale(1.3) rotate(40)'/%3E%3Cuse href='%23f' transform='translate(18 330) scale(1.1) rotate(70)'/%3E%3Cuse href='%23f' transform='translate(372 420) scale(1.9) rotate(5)'/%3E%3Cuse href='%23f' transform='translate(40 560) scale(1.4) rotate(50)'/%3E%3Cuse href='%23f' transform='translate(350 640) scale(1.2) rotate(25)'/%3E%3Cuse href='%23f' transform='translate(200 735) scale(1.6) rotate(60)'/%3E%3Cuse href='%23f' transform='translate(300 40) scale(.9) rotate(10)'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.phone.scanner{background:#101914;color:#fff}.phone.scanner:before{display:none}
+.statusbar{height:25px;padding:5px 17px 0;display:flex;justify-content:space-between;font-size:10px;font-weight:800;flex-shrink:0;position:relative;z-index:1}
+.appbar{display:flex;align-items:center;gap:10px;padding:10px 15px 12px;border-bottom:var(--line);background:var(--white);flex-shrink:0;position:relative;z-index:1}
+.mini-logo{width:43px;height:43px;border:var(--line);border-radius:6px;background:var(--deep);box-shadow:2px 2px 0 var(--ink);overflow:hidden;flex-shrink:0}
+.mini-logo img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+.back{width:40px;height:40px;border:var(--line);border-radius:6px;background:var(--gold);box-shadow:2px 2px 0 var(--ink);display:grid;place-items:center;flex-shrink:0}
+.app-title{font-family:"Kanit",Tahoma,sans-serif;font-size:20px;font-weight:900;font-style:italic;line-height:1.05}
+.app-sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:700}
+.connected{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;font-weight:900;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#16834b;display:inline-block;border:1px solid var(--ink)}
+.content{padding:14px 14px 92px;overflow:hidden;flex:1;position:relative;z-index:1}
+
+/* เมนูล่าง 5 ช่อง ปุ่มสแกนกลาง */
+.bottomnav{height:72px;position:absolute;bottom:0;left:0;right:0;z-index:2;background:var(--nav);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding:6px 6px 8px;border-top:3px solid var(--ink)}
+.navitem{color:#e9dcf7;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:800;padding:5px 0;border-radius:6px}
+.navitem.active{background:var(--gold);color:var(--ink);box-shadow:2px 2px 0 #fff0b5}
+.navscan{justify-self:center;width:62px;height:62px;margin-top:-30px;border-radius:50%;background:var(--gold);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;color:var(--ink)}
+.navscan svg.i{width:28px;height:28px}
+
+h3{font-size:14px;font-weight:900}
+.small{font-size:11px;color:var(--muted);font-weight:700}
+.card{background:var(--white);border:var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:8px}.between{justify-content:space-between}
+.field-label{display:block;font-size:12px;font-weight:900;margin-bottom:5px}
+.input{width:100%;min-width:0;height:44px;padding:0 12px;border:var(--line);border-radius:6px;background:#fffdf9;font-size:14px;font-weight:700;outline:none}
+select.input{appearance:none;background:#fffdf9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a1022' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 10px center/18px no-repeat;padding-right:34px}
+.btn{min-height:44px;padding:10px 14px;border:var(--line);border-radius:6px;background:var(--gold);color:var(--ink);font-weight:900;box-shadow:3px 3px 0 var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn.deep{background:var(--deep);color:#fff}.btn.purple{background:var(--purple);color:#fff}.btn.white{background:#fff}
+.btn:disabled{background:#d9d1c8;color:#756b76;box-shadow:none;border-color:#928994}
+.btn.full{width:100%;margin-top:8px}.btn.sm{min-height:34px;padding:5px 10px;font-size:12px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1.5px solid var(--ink);border-radius:4px;font-size:10px;font-weight:900;white-space:nowrap;background:#fff}
+.badge.gold{background:var(--warn-bg)}.badge.green{background:var(--ok-bg);color:var(--ok)}.badge.red{background:var(--bad-bg);color:var(--bad)}.badge.purple{background:var(--vio-bg);color:#4b167b}.badge.dark{background:var(--ink);color:#fff}
+.searchrow{display:flex;gap:7px;margin-bottom:12px}.searchrow .input{flex:1}
+.progress{height:12px;background:#e3d9c9;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden;margin-top:8px}
+.progress span{display:block;height:100%;background:var(--gold);border-right:2px solid var(--ink)}
+.result{padding:9px 10px;border:1.5px solid var(--ink);border-radius:5px;font-size:12px;font-weight:900;display:flex;align-items:center;gap:8px}
+.result.good{background:var(--ok-bg);color:var(--ok)}.result.bad{background:var(--bad-bg);color:var(--bad)}.result.info{background:var(--vio-bg);color:#4b167b}
+.list-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #d8cbbb}.list-row:last-child{border-bottom:0}
+.thumb{width:42px;height:42px;border:1.5px solid var(--ink);border-radius:5px;background:#f0e4d1;display:grid;place-items:center;flex-shrink:0}
+.info{min-width:0;flex:1}.name{font-size:12.5px;font-weight:900;line-height:1.3}.sub{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:2px}
+.code{font-family:ui-monospace,Consolas,monospace;font-weight:900}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:var(--line);border-radius:7px;overflow:hidden;margin-bottom:12px;background:#fff}
+.seg span{padding:9px;text-align:center;font-weight:900;font-size:13px}.seg .on{background:var(--deep);color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stepper{display:flex;align-items:center;border:var(--line);border-radius:6px;overflow:hidden;height:44px;background:#fff}
+.stepper button{width:44px;height:100%;border:0;background:var(--gold);font-size:22px;font-weight:900}
+.stepper span{flex:1;text-align:center;font-size:20px;font-weight:900;border-left:var(--line);border-right:var(--line);line-height:40px}
+.photo{width:84px;height:84px;border:2.5px dashed var(--ink);border-radius:8px;background:#fff8;display:grid;place-items:center;flex-shrink:0}
+
+/* หน้าแรก */
+.hello{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.hello img{width:66px;height:96px;object-fit:cover;object-position:top;border:var(--line);border-radius:7px;background:#fff;box-shadow:3px 3px 0 var(--ink);image-rendering:pixelated}
+.hello .say{flex:1;background:#fff;border:var(--line);border-radius:8px;padding:9px 12px;box-shadow:3px 3px 0 var(--ink);position:relative}
+.hello .say:before{content:"";position:absolute;left:-11px;top:22px;border:9px solid transparent;border-right-color:var(--ink);border-left:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--white);border:var(--line);border-radius:7px;box-shadow:3px 3px 0 var(--ink);padding:7px;text-align:center}
+.stat b{display:block;font-family:"Kanit",sans-serif;font-size:21px;font-style:italic;font-weight:900;line-height:1.1}
+.stat span{font-size:10px;font-weight:800;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{position:relative;background:var(--white);border:var(--line);border-radius:8px;box-shadow:3px 3px 0 var(--ink);padding:9px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;font-weight:900;text-align:center;line-height:1.2}
+.tile .ic{width:38px;height:38px;border:2px solid var(--ink);border-radius:8px;display:grid;place-items:center}
+.tile .no{position:absolute;top:4px;left:6px;font-size:9px;color:var(--muted)}
+.tile .n{position:absolute;top:-8px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--pink);color:#fff;border:2px solid var(--ink);font-size:11px;display:grid;place-items:center}
+.tile.wide{grid-column:span 3;flex-direction:row;justify-content:center;gap:10px;padding:8px}
+.c1{background:var(--gold)}.c2{background:#c9a6f0}.c3{background:#ffd0dd}.c4{background:#bfe6cc}
+
+/* ของค้าง */
+.remark{display:flex;gap:6px;align-items:flex-start;font-size:12px;font-weight:700;margin-top:5px}
+.remark i{font-style:normal;width:18px;height:18px;border-radius:3px;color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.rC{background:#3fae7d}.rP{background:#8e7cf0}
+.eta{font-family:"Kanit",sans-serif;font-weight:900;font-size:16px}
+
+/* รูปป้าย / ผลอ่าน */
+.tagphoto{width:96px;height:120px;object-fit:cover;object-position:50% 55%;border:var(--line);border-radius:6px;box-shadow:3px 3px 0 var(--ink);flex-shrink:0}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:3px 0}.kv span{color:var(--muted);font-weight:700}.kv b{text-align:right}
+
+/* กล่อง */
+.boxcard{flex:1;border:var(--line);border-radius:7px;background:#fff;padding:9px;box-shadow:3px 3px 0 var(--ink)}
+.boxcard.keep{background:var(--warn-bg)}
+.boxcard .bn{font-family:"Kanit",sans-serif;font-size:22px;font-style:italic;font-weight:900;line-height:1}
+.fill{height:9px;border:1.5px solid var(--ink);border-radius:3px;background:#efe6d8;overflow:hidden;margin:5px 0}
+.fill span{display:block;height:100%;background:var(--purple)}
+.plus{width:30px;height:30px;border-radius:50%;background:var(--deep);color:#fff;border:2px solid var(--ink);display:grid;place-items:center;font-weight:900;flex-shrink:0}
+.src{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #d8cbbb;font-size:12px;font-weight:800}.src:last-child{border-bottom:0}
+.src .k{width:34px;height:26px;border:2px solid var(--ink);border-radius:4px;display:grid;place-items:center;font-weight:900;font-family:ui-monospace,Consolas,monospace;flex-shrink:0}
+.src.x{opacity:.5}.src.pick{background:var(--warn-bg);margin:0 -12px;padding:8px 12px}
+
+/* จับคู่ + สแกน */
+.mascot-frame{height:280px;border:3px solid var(--ink);border-radius:7px;box-shadow:var(--shadow);background:#fff;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.mascot-frame:before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 60%,#7b2fbf14 0 6deg,transparent 6deg 14deg)}
+.mascot-frame img{height:100%;position:relative;z-index:1;image-rendering:pixelated;mix-blend-mode:multiply}
+.gogo{position:absolute;right:9px;top:9px;color:#c98bff;font-family:"Kanit",sans-serif;font-weight:900;font-style:italic;font-size:21px;text-shadow:2px 2px 0 var(--ink);z-index:2}
+.pair-title{text-align:center;margin:16px 0 4px;font-family:"Kanit",sans-serif;font-size:34px;font-weight:900;font-style:italic}
+.pair-sub{text-align:center;font-size:12px;font-weight:800;margin-bottom:14px}
+.pin{font-size:27px;letter-spacing:10px;text-align:center;font-weight:900}
+.help{font-size:11px;line-height:1.7;background:#f1e4d0;border-left:4px solid var(--purple);padding:9px;margin-top:12px;font-weight:700}
+.scan-view{position:absolute;inset:25px 0 0;background:linear-gradient(145deg,#2b3e31,#0b130f 60%,#23382a);overflow:hidden}
+.scan-view:before{content:"";position:absolute;inset:-30%;background:repeating-linear-gradient(120deg,transparent 0 44px,#ffffff0b 45px 47px);transform:rotate(-8deg)}
+.scan-top{position:absolute;top:18px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;z-index:3}
+.close-btn{width:42px;height:42px;border:2.5px solid #fff;border-radius:7px;background:#111a;color:#fff;font-size:26px}
+.aim{position:absolute;width:230px;height:230px;left:50%;top:40%;transform:translate(-50%,-50%);border:2px solid var(--gold);box-shadow:0 0 0 999px #0007;z-index:2}
+.qr{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:140px;height:140px;background:#f7f2e9;padding:10px;z-index:1;
+  background-image:linear-gradient(#101914 0 0),linear-gradient(#101914 0 0),linear-gradient(#101914 0 0),repeating-linear-gradient(90deg,#101914 0 8px,transparent 8px 16px),repeating-linear-gradient(#101914 0 8px,transparent 8px 13px);
+  background-size:36px 36px,36px 36px,36px 36px,100% 100%,100% 100%;background-position:10px 10px,94px 10px,10px 94px,0 0,0 0;background-repeat:no-repeat;background-blend-mode:normal,normal,normal,multiply,multiply}
+.scan-hint{position:absolute;top:110px;left:0;right:0;text-align:center;font-size:14px;font-weight:900;z-index:3}
+.scan-modes{position:absolute;left:12px;right:12px;bottom:190px;z-index:3;display:flex;gap:6px;justify-content:center}
+.chip{padding:6px 11px;border:2px solid #fff;border-radius:999px;background:#0008;color:#fff;font-size:12px;font-weight:900;white-space:nowrap}
+.chip.on{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+.scan-status{position:absolute;left:12px;right:12px;bottom:18px;z-index:3;border:2.5px solid var(--ink);border-radius:7px;padding:13px;background:var(--ok-bg);color:var(--ok);font-weight:900;box-shadow:4px 4px 0 var(--ink)}
+.scan-status strong{display:block;font-size:17px}
+.footnote{font-size:10px;text-align:center;color:#4d4350;margin-top:7px;font-weight:700}
+@media(max-width:1050px){.screens{grid-template-columns:repeat(2,minmax(300px,390px))}.board{padding:18px}}
+@media(max-width:680px){.board{padding:12px}.board-head{display:block}.screens{grid-template-columns:minmax(280px,390px);gap:24px}.phone{margin:auto}}
+</style>
+</head>
+<body>
+<!-- ไอคอนเส้น -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></symbol>
+  <symbol id="lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="orders" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/></symbol>
+  <symbol id="tag" viewBox="0 0 24 24"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+  <symbol id="addsku" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="tasks" viewBox="0 0 24 24"><path d="m3 7 2 2 4-4M13 7h8M3 17l2 2 4-4M13 17h8"/></symbol>
+  <symbol id="merge" viewBox="0 0 24 24"><rect x="2" y="4" width="8" height="8" rx="1"/><rect x="14" y="4" width="8" height="8" rx="1"/><path d="M6 12v3a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3M12 17v4"/></symbol>
+  <symbol id="zone" viewBox="0 0 24 24"><path d="M4 3v18M20 3v18M4 9h16M4 15h16"/></symbol>
+  <symbol id="auto" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol>
+  <symbol id="cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2 2h3l2.7 12.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></symbol>
+  <symbol id="scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M8 7v10M12 7v10M16 7v10"/></symbol>
+  <symbol id="qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h3M21 17v4"/></symbol>
+  <symbol id="box" viewBox="0 0 24 24"><path d="M11 21.7a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7zM12 22V12M3.3 7 12 12l8.7-5"/></symbol>
+  <symbol id="back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="next" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+</svg>
+
+<div class="board">
+  <header class="board-head">
+    <div><h1>jojo / MANGA PACK STATION</h1><p>10 ฟังก์ชันตามที่คุยกัน • ธีมม่วง–เหลือง • มือถือ 390 × 844 px • ข้อมูลในจอเป็นตัวอย่าง</p></div>
+    <div class="manga-label">แพ็กไว · สแกนชัด · ของไม่หลง</div>
+  </header>
+  <main class="screens">
+
+    <!-- 00 หน้าแรก -->
+    <section><div class="screen-label">00 — หน้าแรก (เมนูรวม 10 ฟังก์ชัน)</div>
+    <div class="phone" data-nav="home" data-title="jojo" data-sub="ร้าน · คลังหลัก">
+      <div class="content">
+        <div class="hello"><img src="jojo.webp" alt="jojo"><div class="say"><div class="small">สวัสดีตอนเช้า</div><div style="font-weight:900;font-size:15px">คุณนัท · กะเช้า</div><div class="small" style="margin-top:3px">มีงานเติมของรอ <b style="color:var(--bad)">3 งาน</b></div></div></div>
+        <div class="stats">
+          <div class="stat"><b>12</b><span>ของค้างยังไม่ออก</span></div>
+          <div class="stat"><b>3</b><span>งานเติมของ</span></div>
+          <div class="stat"><b style="color:var(--bad)">4</b><span>รอสั่ง</span></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><span class="no">1</span><div class="ic c1"><svg class="i"><use href="#lock"/></svg></div>ล็อกออเดอร์</div>
+          <div class="tile"><span class="no">2</span><span class="n">12</span><div class="ic c2"><svg class="i"><use href="#orders"/></svg></div>ของค้าง</div>
+          <div class="tile"><span class="no">3</span><div class="ic c3"><svg class="i"><use href="#tag"/></svg></div>เพิ่ม GTIN</div>
+          <div class="tile"><span class="no">4</span><div class="ic c4"><svg class="i"><use href="#addsku"/></svg></div>เพิ่ม SKU</div>
+          <div class="tile"><span class="no">5</span><div class="ic c1"><svg class="i"><use href="#search"/></svg></div>ค้นหาสต็อก</div>
+          <div class="tile"><span class="no">6</span><span class="n">3</span><div class="ic c2"><svg class="i"><use href="#tasks"/></svg></div>งานมอบหมาย</div>
+          <div class="tile"><span class="no">7</span><div class="ic c3"><svg class="i"><use href="#merge"/></svg></div>ยุบ / ย้ายกล่อง</div>
+          <div class="tile"><span class="no">8</span><div class="ic c4"><svg class="i"><use href="#qr"/></svg></div>เช็กโซนหยิบ</div>
+          <div class="tile"><span class="no">9</span><div class="ic c1"><svg class="i"><use href="#auto"/></svg></div>Auto มอบหมาย</div>
+          <div class="tile wide"><span class="n">4</span><div class="ic c3"><svg class="i"><use href="#cart"/></svg></div>10 · รอสั่ง (ของหมดทุกโซน)</div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 01 ล็อกออเดอร์ (แบบเดิม) -->
+    <section><div class="screen-label">01 — ล็อกออเดอร์ (ใช้แบบเดิม)</div>
+    <div class="phone" data-nav="orders" data-back data-title="ล็อกออเดอร์" data-sub="สแกนให้ครบก่อนยืนยัน">
+      <div class="content">
+        <div class="card">
+          <div class="row between"><div><div class="small">เลขพัสดุ · แฟลช เอ็กซ์เพรส</div><div class="code" style="font-size:18px">TH0123456789AB</div></div><span class="badge gold">กำลังแพ็ก</span></div>
+          <div class="row between" style="margin-top:10px"><b>ตรวจสินค้า</b><b>2/3 ชิ้น</b></div>
+          <div class="progress"><span style="width:66%"></span></div>
+        </div>
+        <div class="card">
+          <div class="searchrow" style="margin-bottom:8px"><input class="input" placeholder="สแกน / พิมพ์บาร์โค้ดสินค้า"><button class="btn purple"><svg class="i"><use href="#scan"/></svg></button></div>
+          <div class="result good">✓ WA-242PLACL30-V1-7L +1 · ครบแล้ว 1/1</div>
+        </div>
+        <div class="card" style="padding:6px 12px">
+          <div class="list-row"><div class="thumb"><svg class="i"><use href="#box"/></svg></div><div class="info"><div class="name">เสื้อโปโล WARRIX ไซซ์ 7L</div><div class="sub">WA-242PLACL30-V1-7L</div></div><span class="badge green">ครบ 1/1</span></div>
+          <div class="list-row"><div class="thumb"><svg class="i"><use href="#box"/></svg></div><div class="info"><div class="name">เสื้อกีฬา GRAND SPORT ขาว M</div><div class="sub">072-083 · M</div></div><span class="badge gold">1/2</span></div>
+        </div>
+        <button class="btn full" disabled><svg class="i"><use href="#lock"/></svg>ยืนยัน ล็อกออเดอร์</button>
+        <div class="footnote">ปุ่มจะกดได้เมื่อสแกนครบทุกชิ้น</div>
+      </div>
+    </div></section>
+
+    <!-- 02 ของค้าง -->
+    <section><div class="screen-label">02 — ดูออเดอร์ค้าง</div>
+    <div class="phone" data-nav="orders" data-title="ของค้าง" data-sub="ผ่าน QC = ออกแล้ว · ซิงก์ 09:36">
+      <div class="content">
+        <div class="seg"><span class="on">ยังไม่ออก 12</span><span>ออกแล้ว 30</span></div>
+        <div class="card" style="border-color:var(--bad)">
+          <div class="row between"><span class="code">#SPX250122-0031</span><span class="badge red">เลยกำหนด</span></div>
+          <div class="row between" style="margin-top:6px"><span class="eta" style="color:var(--bad)">ของควรมา 23/10</span><span class="small">ค้าง 3 วัน</span></div>
+          <div class="remark"><i class="rC">C</i><span>Nut.22.10 · No.AB,XL</span></div>
+          <div class="remark"><i class="rP">P</i><span>no AB-XL</span></div>
+        </div>
+        <div class="card">
+          <div class="row between"><span class="code">#SPX250124-0042</span><span class="badge gold">ยังไม่ออก</span></div>
+          <div class="row between" style="margin-top:6px"><span class="eta">ของมา 25/10</span><span class="badge purple">มาพรุ่งนี้</span></div>
+          <div class="remark"><i class="rC">C</i><span>Nut.24.10 · No.AA,L</span></div>
+          <div class="remark"><i class="rP">P</i><span>no AA-L</span></div>
+        </div>
+        <div class="card">
+          <div class="row between"><span class="code">#LZD250124-0117</span><span class="badge gold">ยังไม่ออก</span></div>
+          <div class="row between" style="margin-top:6px"><span class="eta">ของมา 25/10</span><span class="badge purple">มาพรุ่งนี้</span></div>
+          <div class="remark"><i class="rC">C</i><span>Mew.24.10 · No.072-083,M</span></div>
+          <div class="remark"><i class="rP">P</i><span>no 072-083-M</span></div>
+        </div>
+        <div class="footnote">วันที่ในหมายเหตุ = วันสั่งของ · ของมาวันถัดไป</div>
+      </div>
+    </div></section>
+
+    <!-- 03 เพิ่ม GTIN -->
+    <section><div class="screen-label">03 — เพิ่ม GTIN (ถ่ายรูปป้าย)</div>
+    <div class="phone" data-nav="home" data-back data-title="เพิ่ม GTIN" data-sub="ถ่ายป้าย → จับคู่กับ SKU">
+      <div class="content">
+        <div class="card">
+          <div class="row" style="gap:12px;align-items:flex-start">
+            <img class="tagphoto" src="tag-warrix.jpg" alt="ป้าย WARRIX">
+            <div style="flex:1;min-width:0">
+              <span class="badge dark">อ่านจากรูป</span>
+              <div class="kv"><span>แบรนด์</span><b>WARRIX</b></div>
+              <div class="kv"><span>รุ่น</span><b class="code">WA-242PLACL30-V1</b></div>
+              <div class="kv"><span>ไซซ์</span><b>7L</b></div>
+              <div class="kv"><span>เลขใต้บาร์โค้ด</span><b class="code">8859527508948</b></div>
+            </div>
+          </div>
+          <div class="result good" style="margin-top:10px">✓ เลขในรูปตรงกับบาร์โค้ดที่สแกนได้</div>
+        </div>
+        <h3 style="margin-bottom:6px">SKU ที่ตรงกัน</h3>
+        <div class="card" style="padding:6px 12px">
+          <div class="list-row"><div class="thumb"><svg class="i"><use href="#box"/></svg></div><div class="info"><div class="name code">WA-242PLACL30-V1-7L</div><div class="sub">ตรงทั้งรุ่นและไซซ์ · ยังไม่มีบาร์โค้ด</div></div><span class="badge purple">ตรงที่สุด</span></div>
+          <div class="list-row"><div class="thumb"><svg class="i"><use href="#box"/></svg></div><div class="info"><div class="name code">WA-242PLACL30-V1-6L</div><div class="sub">รุ่นตรง ไซซ์ไม่ตรง</div></div><span class="badge">เลือก</span></div>
+        </div>
+        <button class="btn full"><svg class="i"><use href="#tag"/></svg>ผูก 8859527508948 กับ SKU นี้</button>
+        <div class="footnote">กฎแบรนด์: WARRIX ใช้เลขใต้บาร์โค้ด · GRAND SPORT ใช้บาร์โค้ดตัวบน</div>
+      </div>
+    </div></section>
+
+    <!-- 04 เพิ่ม SKU -->
+    <section><div class="screen-label">04 — เพิ่ม SKU (แบบ BigSeller แต่ง่าย)</div>
+    <div class="phone" data-nav="home" data-back data-title="เพิ่ม SKU ใหม่" data-sub="สร้างใน BigSeller จากมือถือ">
+      <div class="content">
+        <div class="result info" style="margin-bottom:10px"><svg class="i" style="width:16px;height:16px"><use href="#camera"/></svg>กรอกให้จากรูปป้าย GRAND SPORT แล้ว ตรวจก่อนบันทึก</div>
+        <div class="card">
+          <div class="row" style="gap:12px;align-items:flex-start">
+            <img class="tagphoto" src="tag-grandsport.jpg" alt="ป้าย GRAND SPORT" style="width:84px;height:84px;object-position:50% 75%">
+            <div style="flex:1"><label class="field-label">ชื่อสินค้า</label><input class="input" value="เสื้อกีฬา GRAND SPORT ขาว"></div>
+          </div>
+          <div class="grid2" style="margin-top:10px">
+            <div><label class="field-label">SKU</label><input class="input code" value="072-083-M"></div>
+            <div><label class="field-label">แบรนด์</label><input class="input" value="GRAND SPORT"></div>
+            <div><label class="field-label">ไซซ์</label><input class="input" value="M"></div>
+            <div><label class="field-label">สี</label><input class="input" value="ขาว (2000)"></div>
+          </div>
+          <label class="field-label" style="margin-top:10px">บาร์โค้ด (ตัวบน)</label>
+          <input class="input code" value="0720832000002">
+          <div class="grid2" style="margin-top:10px">
+            <div><label class="field-label">ราคา</label><input class="input" value="395"></div>
+            <div><label class="field-label">จำนวน</label><div class="stepper"><button>−</button><span>12</span><button>+</button></div></div>
+          </div>
+        </div>
+        <button class="btn full deep"><svg class="i"><use href="#addsku"/></svg>สร้าง SKU ใน BigSeller</button>
+        <div class="footnote">ช่องที่แสดงจะปรับตามหน้าเพิ่ม SKU ของ BigSeller ที่ร้านใช้จริง</div>
+      </div>
+    </div></section>
+
+    <!-- 05 ค้นหาสต็อก -->
+    <section><div class="screen-label">05 — ค้นหาสต็อก (อยู่ไหน · มีไหม)</div>
+    <div class="phone" data-nav="stock" data-title="ค้นหาสต็อก" data-sub="พิมพ์ · สแกน · ถ่ายรูปป้าย">
+      <div class="content">
+        <div class="searchrow"><input class="input code" value="072-083-M"><button class="btn purple"><svg class="i"><use href="#scan"/></svg></button></div>
+        <div class="card">
+          <div class="row" style="gap:10px"><div class="thumb" style="width:52px;height:52px"><svg class="i"><use href="#box"/></svg></div><div class="info"><div class="name" style="font-size:15px">เสื้อกีฬา GRAND SPORT ขาว M</div><div class="sub">072-083-M · 0720832000002</div></div><span class="badge green">มีของ</span></div>
+          <div class="grid2" style="margin-top:12px;grid-template-columns:repeat(3,1fr)">
+            <div class="stat"><b>38</b><span>ทั้งหมด</span></div>
+            <div class="stat"><b style="color:var(--bad)">2</b><span>จองแล้ว</span></div>
+            <div class="stat"><b style="color:#16834b">36</b><span>ขายได้</span></div>
+          </div>
+        </div>
+        <h3 style="margin-bottom:6px">อยู่ที่ไหนบ้าง</h3>
+        <div class="card" style="padding:4px 12px">
+          <div class="src"><span class="k" style="background:var(--warn-bg)">หยิบ</span><span class="info code">กล่อง 07</span><b>2</b></div>
+          <div class="src"><span class="k">C</span><span class="info code">C-03-02</span><b>12</b></div>
+          <div class="src"><span class="k">K</span><span class="info code">K-11-01</span><b>0</b></div>
+          <div class="src"><span class="k">H</span><span class="info code">H-02 (ทั้งกล่อง)</span><b>24</b></div>
+        </div>
+        <div class="footnote">ตำแหน่งในจอเป็นตัวอย่าง · รอข้อมูลว่าร้านเก็บตำแหน่งไว้ที่ไหน</div>
+      </div>
+    </div></section>
+
+    <!-- 06 งานมอบหมาย (แบบร่าง) -->
+    <section><div class="screen-label">06 — งานมอบหมาย (แบบร่าง · งานย้ายของ BigSeller)</div>
+    <div class="phone" data-nav="tasks" data-title="งานมอบหมาย" data-sub="วันนี้ · 24 ต.ค.">
+      <div class="content">
+        <div class="seg"><span class="on">งานของฉัน 3</span><span>ทั้งทีม 9</span></div>
+        <div class="card" style="border-color:var(--bad)"><div class="row between"><span class="badge red">เติมโซนหยิบ</span><span class="small">สร้างอัตโนมัติ 09:40</span></div><div class="name" style="font-size:14px;margin:6px 0 2px">เติมกล่อง 07 · 072-083-M</div><div class="sub">หยิบจาก C-03-02 จำนวน 10</div><div class="row between" style="margin-top:8px"><span class="small">มอบให้: nut_packer</span><button class="btn sm deep">เริ่มงาน</button></div></div>
+        <div class="card"><div class="row between"><span class="badge red">เติมโซนหยิบ</span><span class="small">สร้างอัตโนมัติ 09:52</span></div><div class="name" style="font-size:14px;margin:6px 0 2px">เติมกล่อง 12 · WA-242PLACL30</div><div class="sub">ยกทั้งกล่อง H-05 (C-, K- ไม่มีของ)</div><div class="row between" style="margin-top:8px"><span class="small">มอบให้: nut_packer</span><button class="btn sm">เริ่มงาน</button></div></div>
+        <div class="card"><div class="row between"><span class="badge purple">ยุบกล่อง</span><span class="small">จากไกด์</span></div><div class="name" style="font-size:14px;margin:6px 0 2px">ยุบกล่อง 03 + 09 → เก็บ 03</div><div class="sub">WARRIX รุ่นเดียวกัน</div><div class="row between" style="margin-top:8px"><span class="small">ยังไม่เริ่ม</span><button class="btn sm">เริ่มงาน</button></div></div>
+        <div class="footnote">หน้านี้เป็นแบบร่าง · จะทำจริงทีหลัง</div>
+      </div>
+    </div></section>
+
+    <!-- 07 ยุบ / ย้ายกล่อง -->
+    <section><div class="screen-label">07 — ยุบ / ย้ายกล่อง</div>
+    <div class="phone" data-nav="stock" data-back data-title="ยุบกล่อง" data-sub="รวม 2 กล่องเป็นกล่องเดียว">
+      <div class="content">
+        <div class="row" style="gap:8px;margin-bottom:12px;align-items:stretch">
+          <div class="boxcard keep"><div class="small">กล่อง · เก็บไว้ ✓</div><div class="bn">03</div><div class="fill"><span style="width:45%"></span></div><div class="sub">WARRIX · 3 SKU · 18 ตัว</div></div>
+          <div class="plus" style="align-self:center">+</div>
+          <div class="boxcard"><div class="small">กล่อง · จะว่าง</div><div class="bn">09</div><div class="fill"><span style="width:40%"></span></div><div class="sub">WARRIX · 2 SKU · 15 ตัว</div></div>
+        </div>
+        <div class="result good" style="margin-bottom:8px">✓ แบรนด์เดียวกัน (WARRIX) ยุบได้</div>
+        <div class="card" style="padding:6px 12px">
+          <div class="small" style="padding-top:4px">ของในกล่อง 09 ที่จะย้ายไปกล่อง 03</div>
+          <div class="list-row"><div class="info"><div class="name code">WA-242PLACL30-V1-6L</div></div><b>8</b></div>
+          <div class="list-row"><div class="info"><div class="name code">WA-242PLACL30-V1-7L</div></div><b>7</b></div>
+        </div>
+        <button class="btn full deep"><svg class="i"><use href="#merge"/></svg>ยุบเข้ากล่อง 03 · กล่อง 09 ว่าง</button>
+        <h3 style="margin:14px 0 6px">ไกด์แนะนำ (ทำหรือไม่ก็ได้)</h3>
+        <div class="card" style="padding:6px 12px;margin-bottom:0">
+          <div class="list-row"><span class="badge purple">รุ่นเดียวกัน</span><div class="info"><div class="name">กล่อง 05 + 11</div><div class="sub">072-083 · รวมแล้วเต็ม 80%</div></div><button class="btn sm white">ทำ</button></div>
+          <div class="list-row"><span class="badge gold">แบรนด์เดียวกัน</span><div class="info"><div class="name">กล่อง 14 + 15</div><div class="sub">GRAND SPORT คนละรุ่น</div></div><button class="btn sm white">ทำ</button></div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 08 เช็กโซนหยิบ: สแกน QR กล่องว่าง -->
+    <section><div class="screen-label">08 — เช็กโซนหยิบ (สแกน QR กล่องว่าง)</div>
+    <div class="phone scanner">
+      <div class="statusbar"><span>9:41</span><span>● ● ●　▰</span></div>
+      <div class="scan-view">
+        <div class="scan-top"><button class="close-btn">×</button><span class="badge dark">เช็กโซนหยิบ</span><span style="width:42px"></span></div>
+        <div class="scan-hint">เจอกล่องว่าง? สแกน QR ที่กล่อง</div>
+        <div class="aim"></div><div class="qr"></div>
+        <div class="scan-modes"><span class="chip on">แจ้งกล่องว่าง</span><span class="chip">ดูของในกล่อง</span></div>
+        <div class="scan-status"><strong>✓ กล่อง 07 ว่าง</strong><span>ล่าสุดเก็บ 072-083-M · สร้างงานเติมของอัตโนมัติแล้ว</span><div class="row between" style="margin-top:8px"><span class="small" style="color:var(--ok)">หยิบจาก C-03-02 · 10 ตัว</span><span class="badge green">ไปข้อ 9 ›</span></div></div>
+      </div>
+    </div></section>
+
+    <!-- 09 Auto มอบหมาย -->
+    <section><div class="screen-label">09 — Auto มอบหมาย (หลังสแกนกล่องว่าง)</div>
+    <div class="phone" data-nav="tasks" data-back data-title="งานเติมกล่อง 07" data-sub="สร้างอัตโนมัติจากการสแกน">
+      <div class="content">
+        <div class="card">
+          <div class="row" style="gap:10px"><div class="thumb" style="width:52px;height:52px"><svg class="i"><use href="#box"/></svg></div><div class="info"><div class="name" style="font-size:15px">072-083-M · GRAND SPORT</div><div class="sub">กล่อง 07 ในโซนหยิบว่าง</div></div></div>
+        </div>
+        <h3 style="margin-bottom:6px">หาของมาเติม (ตามลำดับ)</h3>
+        <div class="card" style="padding:4px 12px">
+          <div class="src pick"><span class="k" style="background:#fff">C</span><div class="info"><div>C-03-02 · มี 12</div><div class="sub">หยิบเท่าที่ต้องเติม</div></div><span class="badge green">ใช้ที่นี่</span></div>
+          <div class="src x"><span class="k">K</span><div class="info"><div>ถ้า C- ไม่มี → K-</div><div class="sub">หยิบเท่าที่ต้องเติม</div></div></div>
+          <div class="src x"><span class="k">H</span><div class="info"><div>ถ้า K- ไม่มี → H-</div><div class="sub">ต้องยกมาทั้งกล่อง ลงกล่องว่างกล่องเดียว</div></div></div>
+          <div class="src x"><span class="k" style="font-size:10px">10</span><div class="info"><div>ไม่มีทั้ง 3 ที่ → รอสั่ง</div></div></div>
+        </div>
+        <label class="field-label">มอบหมายให้ (บัญชีย่อย BigSeller)</label>
+        <select class="input"><option>nut_packer · คุณนัท</option><option>mew_stock · คุณมิว</option><option>ton_stock · คุณต้น</option></select>
+        <div class="grid2" style="margin-top:10px">
+          <div><label class="field-label">จำนวนเติม</label><div class="stepper"><button>−</button><span>10</span><button>+</button></div></div>
+          <div style="align-self:end"><button class="btn deep" style="width:100%"><svg class="i"><use href="#auto"/></svg>มอบหมาย</button></div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- 10 รอสั่ง -->
+    <section><div class="screen-label">10 — รอสั่ง</div>
+    <div class="phone" data-nav="home" data-back data-title="รอสั่ง" data-sub="ไม่มีของใน C- · K- · H-">
+      <div class="content">
+        <div class="seg"><span class="on">รอสั่ง 4</span><span>สั่งแล้ว 6</span></div>
+        <div class="card"><div class="row between"><span class="name code">WA-242PLACL30-V1-5L</span><span class="badge red">หมดทุกโซน</span></div><div class="sub" style="margin-top:4px">WARRIX · กล่องว่าง 12 · แจ้งโดย nut_packer 09:52</div><div class="row between" style="margin-top:8px"><span class="small">มีออเดอร์ค้างรออยู่ 2</span><button class="btn sm">สั่งแล้ว</button></div></div>
+        <div class="card"><div class="row between"><span class="name code">072-083-XL</span><span class="badge red">หมดทุกโซน</span></div><div class="sub" style="margin-top:4px">GRAND SPORT · กล่องว่าง 18 · แจ้งโดย mew_stock 08:30</div><div class="row between" style="margin-top:8px"><span class="small">ไม่มีออเดอร์ค้าง</span><button class="btn sm">สั่งแล้ว</button></div></div>
+        <div class="card"><div class="row between"><span class="name code">072-085-L</span><span class="badge red">หมดทุกโซน</span></div><div class="sub" style="margin-top:4px">GRAND SPORT · กล่องว่าง 21 · แจ้งโดย ton_stock เมื่อวาน</div><div class="row between" style="margin-top:8px"><span class="small">มีออเดอร์ค้างรออยู่ 1</span><button class="btn sm">สั่งแล้ว</button></div></div>
+        <div class="footnote">กด "สั่งแล้ว" = ใส่วันสั่ง · ของมาวันถัดไป (เหมือนหน้าของค้าง)</div>
+      </div>
+    </div></section>
+
+    <!-- จับคู่ -->
+    <section><div class="screen-label">เริ่มต้น — จับคู่เครื่อง</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span>● ● ●　▰</span></div>
+      <div class="content" style="padding-top:20px">
+        <div class="mascot-frame"><span class="gogo">ゴゴゴ</span><img src="jojo.webp" alt="jojo"></div>
+        <div class="pair-title">jojo</div><div class="pair-sub">เชื่อมต่อพลังแพ็กของเข้ากับอะตอมมิค</div>
+        <div class="card">
+          <label class="field-label">รหัสจับคู่ 6 หลัก</label>
+          <input class="input pin" value="••••••">
+          <button class="btn full">จับคู่</button>
+          <div class="help">อะตอมมิค › บัญชี &amp; การล็อกอิน › แอพมือถือ jojo</div>
+        </div>
+      </div>
+    </div></section>
+
+  </main>
+</div>
+
+<script>
+// เติมแถบสถานะ หัวแอพ และเมนูล่างให้ทุกจอที่มี data-title
+const NAV = [['home','หน้าแรก','home'],['orders','ออเดอร์','orders'],null,['tasks','งาน','tasks'],['stock','สต็อก','search']];
+document.querySelectorAll('.phone[data-title]').forEach(p => {
+  const lead = p.hasAttribute('data-back')
+    ? '<div class="back"><svg class="i"><use href="#back"/></svg></div>'
+    : '<div class="mini-logo"><img src="avatar.png" alt=""></div>';
+  p.insertAdjacentHTML('afterbegin',
+    '<div class="statusbar"><span>9:41</span><span>● ● ●　▰</span></div>' +
+    '<header class="appbar">' + lead + '<div><div class="app-title">' + p.dataset.title + '</div><div class="app-sub">' + p.dataset.sub + '</div></div><div class="connected"><i class="dot"></i>อะตอมมิค</div></header>');
+  p.insertAdjacentHTML('beforeend', '<nav class="bottomnav">' + NAV.map(n => n
+    ? '<button class="navitem' + (n[0] === p.dataset.nav ? ' active' : '') + '"><svg class="i"><use href="#' + n[2] + '"/></svg>' + n[1] + '</button>'
+    : '<button class="navscan" aria-label="สแกน"><svg class="i"><use href="#scan"/></svg></button>').join('') + '</nav>');
+});
+</script>
+</body>
+</html>

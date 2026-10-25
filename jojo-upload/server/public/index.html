@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4b1f7a">
+<title>jojo</title>
+<link rel="icon" href="avatar.png">
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600;700&family=Kanit:ital,wght@1,900&display=swap" rel="stylesheet">
+<style>
+/* ธีมม่วง–เหลือง ตามไฟล์ดีไซน์ jojo/design/jojo-manga-ui.html */
+:root{--deep:#4b1f7a;--purple:#7b2fbf;--gold:#f2b705;--pink:#e8336f;--ink:#1a1022;--white:#fffdf8;--muted:#655b68;--nav:#2e1150;--line:2.5px solid var(--ink);--shadow:4px 4px 0 var(--ink);--ok:#104b2d;--ok-bg:#dff4e5;--bad:#a90f43;--bad-bg:#ffe0e9;--warn-bg:#ffe99b;--vio-bg:#ead8fa}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;color:var(--ink);font:15px/1.45 "Anuphan",Tahoma,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(90deg,rgba(255,255,255,.85) 0 5px,transparent 5px) -2px 0/58px 58px,linear-gradient(rgba(255,255,255,.85) 0 5px,transparent 5px) 0 -2px/58px 58px,linear-gradient(180deg,#c7a3ef 0%,#e2c3ee 38%,#fbe39a 75%,#f7cf5e 100%) fixed}
+[hidden]{display:none!important}
+button,input,select{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.title{font-family:"Kanit",sans-serif;font-style:italic;font-weight:900}
+.card{background:var(--white);border:var(--line);border-radius:8px;box-shadow:var(--shadow);padding:12px;margin-bottom:12px}
+.input{width:100%;min-width:0;height:46px;padding:0 12px;border:var(--line);border-radius:6px;background:#fffdf9;font-size:15px;font-weight:700;outline:none}
+.input:focus{box-shadow:0 0 0 3px #f2b70580}
+select.input{appearance:none;padding-right:34px;background:#fffdf9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a1022' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 10px center/18px no-repeat}
+.btn{min-height:46px;padding:10px 16px;border:var(--line);border-radius:6px;background:var(--gold);font-weight:900;box-shadow:3px 3px 0 var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn.deep{background:var(--deep);color:#fff}.btn.purple{background:var(--purple);color:#fff}.btn.white{background:#fff}
+.btn:disabled{opacity:.6;cursor:not-allowed;box-shadow:none}
+.btn.full{width:100%;margin-top:8px}.btn.sm{min-height:34px;padding:4px 10px;font-size:12px}
+.lbl{display:block;font-size:12px;font-weight:900;margin:10px 0 5px}
+.msg{padding:9px 10px;border:1.5px solid var(--ink);border-radius:5px;font-size:13px;font-weight:700;margin:8px 0;display:flex;gap:6px;align-items:center}
+.msg.bad{background:var(--bad-bg);color:var(--bad)}.msg.ok{background:var(--ok-bg);color:var(--ok)}.msg.info{background:var(--vio-bg);color:#4b167b}
+.small{font-size:11.5px;color:var(--muted);font-weight:700}
+.code{font-family:ui-monospace,Consolas,monospace;font-weight:900}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1.5px solid var(--ink);border-radius:4px;font-size:11px;font-weight:900;background:#fff;white-space:nowrap}
+.badge.green{background:var(--ok-bg);color:var(--ok)}.badge.red{background:var(--bad-bg);color:var(--bad)}.badge.gold{background:var(--warn-bg)}.badge.purple{background:var(--vio-bg);color:#4b167b}.badge.dark{background:var(--ink);color:#fff}
+.row{display:flex;align-items:center;gap:8px}.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.list-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid #d8cbbb}.list-row:first-child{border-top:0}
+.thumb{width:42px;height:42px;border:1.5px solid var(--ink);border-radius:5px;background:#f0e4d1;display:grid;place-items:center;flex-shrink:0}
+.info{min-width:0;flex:1}.name{font-size:13px;font-weight:900;line-height:1.3}.sub{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:var(--line);border-radius:7px;overflow:hidden;margin-bottom:12px;background:#fff}
+.seg button{padding:9px;border:0;background:none;font-weight:900;font-size:13px;cursor:pointer}.seg .on{background:var(--deep);color:#fff}
+.stepper{display:flex;align-items:center;border:var(--line);border-radius:6px;overflow:hidden;height:46px;background:#fff}
+.stepper button{width:46px;height:100%;border:0;background:var(--gold);font-size:22px;font-weight:900;cursor:pointer}
+.stepper span{flex:1;text-align:center;font-size:20px;font-weight:900;border-left:var(--line);border-right:var(--line);line-height:42px}
+.progress{height:12px;background:#e3d9c9;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden;margin-top:8px}
+.progress span{display:block;height:100%;background:var(--gold);border-right:2px solid var(--ink)}
+.stub{display:inline-block;background:var(--pink);color:#fff;border:1.5px solid var(--ink);padding:2px 8px;font-size:11px;font-weight:900;transform:skew(-6deg);margin-bottom:10px}
+.search{display:flex;gap:8px;margin-bottom:12px}.search .input{flex:1}
+.toggle{width:42px;height:24px;border:2px solid var(--ink);border-radius:999px;background:#d9d1c8;position:relative;flex-shrink:0;cursor:pointer}
+.toggle:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;border:1.5px solid var(--ink)}
+.toggle.on{background:var(--purple)}.toggle.on:after{left:20px}
+
+/* ล็อกอิน */
+.login{max-width:380px;margin:0 auto;padding:36px 18px}
+.hero{height:230px;border:3px solid var(--ink);border-radius:8px;box-shadow:var(--shadow);background:#fff;display:flex;justify-content:center;overflow:hidden;position:relative}
+.hero:before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 60%,#7b2fbf14 0 6deg,transparent 6deg 14deg)}
+.hero img{height:100%;position:relative;image-rendering:pixelated;mix-blend-mode:multiply}
+.hero b{position:absolute;right:10px;top:8px;color:#c98bff;font:italic 900 21px "Kanit",sans-serif;text-shadow:2px 2px 0 var(--ink)}
+.login h1{text-align:center;font-size:36px;margin:14px 0 2px}
+.login p{text-align:center;margin:0 0 14px;font-weight:700;font-size:13px}
+/* รูปรหัสยืนยันของ BigSeller เล็กมาก (108×33) → ขยายเต็มความกว้างให้อ่านง่ายบนมือถือ */
+.cap{display:block;width:100%;padding:6px;border:var(--line);border-radius:6px;background:#fff;cursor:pointer}
+.cap img{display:block;width:100%;height:auto;max-height:110px;object-fit:contain}
+.agree{display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:12px;font-weight:700}
+.agree input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--deep);flex-shrink:0}
+
+/* โครงแอพ */
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:var(--white);border-bottom:var(--line)}
+.top .logo{width:40px;height:40px;border:var(--line);border-radius:6px;image-rendering:pixelated;box-shadow:2px 2px 0 var(--ink)}
+.top .back{width:40px;height:40px;border:var(--line);border-radius:6px;background:var(--gold);box-shadow:2px 2px 0 var(--ink);display:grid;place-items:center;cursor:pointer}
+.top .title{font-size:20px;line-height:1}
+.top .who{margin-left:auto;text-align:right}
+.page{max-width:520px;margin:0 auto;padding:14px 14px calc(100px + env(safe-area-inset-bottom))}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--nav);border-top:3px solid var(--ink);padding:6px 6px calc(8px + env(safe-area-inset-bottom))}
+.nav-in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:center}
+.nav a{color:#e9dcf7;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:800;padding:5px 0;border-radius:6px}
+.nav a.on{background:var(--gold);color:var(--ink);box-shadow:2px 2px 0 #fff0b5}
+.nav .scan{justify-self:center;width:62px;height:62px;margin-top:-30px;border-radius:50%;background:var(--gold);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;color:var(--ink);cursor:pointer}
+.nav .scan svg.i{width:28px;height:28px}
+
+/* หน้าแรก */
+.hello{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.hello img{width:66px;height:96px;object-fit:cover;object-position:top;border:var(--line);border-radius:7px;background:#fff;box-shadow:3px 3px 0 var(--ink);image-rendering:pixelated}
+.hello .say{flex:1;background:#fff;border:var(--line);border-radius:8px;padding:9px 12px;box-shadow:3px 3px 0 var(--ink);position:relative}
+.hello .say:before{content:"";position:absolute;left:-11px;top:22px;border:9px solid transparent;border-right-color:var(--ink);border-left:0}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{position:relative;background:var(--white);border:var(--line);border-radius:8px;box-shadow:3px 3px 0 var(--ink);padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;font-weight:900;text-align:center;line-height:1.2}
+.tile .ic{width:40px;height:40px;border:2px solid var(--ink);border-radius:8px;display:grid;place-items:center}
+.tile .no{position:absolute;top:4px;left:6px;font-size:9px;color:var(--muted)}
+.tile .live{position:absolute;top:-8px;right:-6px;background:#2f9e5e;color:#fff;border:2px solid var(--ink);border-radius:999px;font-size:9px;padding:1px 6px}
+.tile.wide{grid-column:span 3;flex-direction:row;justify-content:center;gap:10px;padding:8px}
+.c1{background:var(--gold)}.c2{background:#c9a6f0}.c3{background:#ffd0dd}.c4{background:#bfe6cc}
+
+/* สต็อก */
+.sku{display:flex;gap:10px;align-items:center}
+.sku img,.sku .noimg{width:52px;height:52px;border:1.5px solid var(--ink);border-radius:5px;object-fit:cover;background:#f0e4d1;flex-shrink:0}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.num{border:var(--line);border-radius:7px;padding:6px;text-align:center;background:#fff}
+.num b{display:block;font:italic 900 22px "Kanit",sans-serif;line-height:1.1}
+.num span{font-size:10.5px;font-weight:800;color:var(--muted)}
+.shelf{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-top:1px solid #d8cbbb;font-size:13px}
+.shelf.empty .code{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted)}
+
+/* ของค้าง / ป้าย / กล่อง */
+.remark{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;font-weight:700;margin-top:5px}
+.remark i{font-style:normal;width:18px;height:18px;border-radius:3px;color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.rC{background:#3fae7d}.rP{background:#8e7cf0}
+.eta{font:italic 900 16px "Kanit",sans-serif}
+.tagphoto{width:96px;height:120px;object-fit:cover;object-position:50% 55%;border:var(--line);border-radius:6px;box-shadow:3px 3px 0 var(--ink);flex-shrink:0;background:#f0e4d1}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:3px 0}.kv span{color:var(--muted);font-weight:700}
+.boxcard{flex:1;border:var(--line);border-radius:7px;background:#fff;padding:9px;box-shadow:3px 3px 0 var(--ink)}
+.boxcard.keep{background:var(--warn-bg)}
+.boxcard .bn{font:italic 900 20px "Kanit",sans-serif;line-height:1.1}
+.src{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #d8cbbb;font-size:12.5px;font-weight:800}.src:first-child{border-top:0}
+.src .k{width:34px;height:26px;border:2px solid var(--ink);border-radius:4px;display:grid;place-items:center;font-weight:900;flex-shrink:0;background:#fff}
+.src.x{opacity:.5}.src.pick{background:var(--warn-bg);margin:0 -12px;padding:8px 12px}
+
+/* กล้องสแกน (โครง) */
+/* หน้ากล้อง: ธีม JoJo — แถบม่วงบน · มุมเล็งทอง · นอกกรอบมืด · เลเซอร์ชมพูวิ่ง · แถบผลแบบช่องการ์ตูน */
+.scanner{position:fixed;inset:0;z-index:20;background:#0e0718;color:#fff;overflow:hidden}
+.scanner video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scan-top{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(14px + env(safe-area-inset-top)) 16px 16px;background:linear-gradient(180deg,#2e1150 0%,#2e1150e6 70%,transparent);}
+.scan-kicker{font-size:11px;font-weight:900;color:var(--gold);letter-spacing:1px}
+.scan-top .title{font-size:20px;line-height:1.15;text-shadow:2px 2px 0 var(--ink)}
+.scanner .close{flex-shrink:0;width:44px;height:44px;border:var(--line);border-radius:8px;background:var(--gold);color:var(--ink);font-size:20px;font-weight:900;box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+.scanner .aim{position:absolute;z-index:2;left:50%;top:46%;width:min(78vw,320px);height:190px;transform:translate(-50%,-50%);border-radius:14px;box-shadow:0 0 0 9999px rgba(14,7,24,.62)}
+.scanner .aim i{position:absolute;width:38px;height:38px;border:5px solid var(--gold);filter:drop-shadow(2px 2px 0 var(--ink))}
+.scanner .aim .k1{left:-3px;top:-3px;border-right:0;border-bottom:0;border-radius:14px 0 0 0}
+.scanner .aim .k2{right:-3px;top:-3px;border-left:0;border-bottom:0;border-radius:0 14px 0 0}
+.scanner .aim .k3{left:-3px;bottom:-3px;border-right:0;border-top:0;border-radius:0 0 0 14px}
+.scanner .aim .k4{right:-3px;bottom:-3px;border-left:0;border-top:0;border-radius:0 0 14px 0}
+.scanner .laser{position:absolute;left:14px;right:14px;top:10%;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--pink) 20%,#ff8fb4 50%,var(--pink) 80%,transparent);box-shadow:0 0 12px var(--pink);animation:laser 1.6s ease-in-out infinite alternate}
+@keyframes laser{to{top:88%}}
+.gogo-l,.gogo-r{position:absolute;z-index:2;font:italic 900 26px/1.05 "Kanit",sans-serif;color:#c98bff;opacity:.55;text-shadow:2px 2px 0 var(--ink);pointer-events:none}
+.gogo-l{left:12px;top:30%}.gogo-r{right:14px;top:58%}
+.scanner .res{position:absolute;left:14px;right:14px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:3;border:var(--line);border-radius:8px;padding:14px 16px;background:var(--white);color:var(--ink);font-weight:900;font-size:15px;box-shadow:4px 4px 0 var(--ink)}
+.scanner.ok .res{background:var(--ok-bg);color:var(--ok)}.scanner.bad .res{background:var(--bad-bg);color:var(--bad)}
+.scanner.ok .aim i{border-color:#2f9e5e}.scanner.bad .aim i{border-color:var(--pink)}
+</style>
+</head>
+<body>
+<!-- ไอคอนเส้น -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></symbol>
+  <symbol id="lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="orders" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/></symbol>
+  <symbol id="tag" viewBox="0 0 24 24"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+  <symbol id="addsku" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="tasks" viewBox="0 0 24 24"><path d="m3 7 2 2 4-4M13 7h8M3 17l2 2 4-4M13 17h8"/></symbol>
+  <symbol id="merge" viewBox="0 0 24 24"><rect x="2" y="4" width="8" height="8" rx="1"/><rect x="14" y="4" width="8" height="8" rx="1"/><path d="M6 12v3a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3M12 17v4"/></symbol>
+  <symbol id="qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h3M21 17v4"/></symbol>
+  <symbol id="auto" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol>
+  <symbol id="cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2 2h3l2.7 12.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></symbol>
+  <symbol id="shelf" viewBox="0 0 24 24"><path d="M4 3v18M20 3v18M4 9h16M4 15h16"/></symbol>
+  <symbol id="scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M8 7v10M12 7v10M16 7v10"/></symbol>
+  <symbol id="box" viewBox="0 0 24 24"><path d="M11 21.7a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7zM12 22V12M3.3 7 12 12l8.7-5"/></symbol>
+  <symbol id="back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+</svg>
+
+<!-- ล็อกอินด้วยบัญชีย่อย BigSeller ของตัวเอง -->
+<section class="login" id="vLogin" hidden>
+  <div class="hero"><b>ゴゴゴ</b><img src="jojo.webp" alt="jojo"></div>
+  <h1 class="title">jojo</h1>
+  <p>ล็อกอินด้วยบัญชี BigSeller ของคุณ</p>
+  <form class="card" id="fLogin">
+    <label class="lbl" for="u" style="margin-top:0">ชื่อผู้ใช้ BigSeller</label>
+    <input class="input" id="u" autocomplete="username" autocapitalize="none" required>
+    <label class="lbl" for="p">รหัสผ่าน</label>
+    <input class="input" id="p" type="password" autocomplete="current-password" required>
+    <div id="capRow" hidden>
+      <label class="lbl" for="c">รหัสยืนยันจาก BigSeller (พิมพ์ตามรูป)</label>
+      <button type="button" class="cap" id="bCap" title="ขอรูปใหม่"><img id="capImg" alt="รหัสยืนยัน"></button>
+      <div class="small" style="margin:4px 0 6px">อ่านไม่ออก? แตะที่รูปเพื่อขอรูปใหม่</div>
+      <input class="input code" id="c" autocomplete="off" autocapitalize="characters" spellcheck="false" style="letter-spacing:4px;font-size:20px">
+    </div>
+    <label class="agree"><input type="checkbox" id="agree"> ฉันได้อ่านและยอมรับเงื่อนไขการใช้งานและ Privacy Policy ของ BigSeller</label>
+    <button class="btn deep" id="bLogin" style="width:100%;margin-top:14px">เข้าสู่ระบบ</button>
+    <div class="msg bad" id="loginMsg" hidden></div>
+  </form>
+  <div class="small" style="text-align:center">รหัสผ่านใช้ล็อกอิน BigSeller ครั้งเดียว เซิร์ฟเวอร์ไม่เก็บรหัสผ่าน</div>
+</section>
+
+<!-- แอพ -->
+<div id="vApp" hidden>
+  <header class="top">
+    <img class="logo" id="topLogo" src="avatar.png" alt="">
+    <a class="back" id="topBack" href="#home" hidden><svg class="i"><use href="#back"/></svg></a>
+    <div><div class="title" id="topTitle">jojo</div><div class="small" id="topSub"></div></div>
+    <div class="who"><div class="small" id="who"></div><button class="btn sm" id="bOut" style="margin-top:3px">ออกจากระบบ</button></div>
+  </header>
+  <div class="page">
+    <div class="msg info" id="mockNote" hidden>โหมดทดลอง (ข้อมูลจำลอง) — ยังไม่ได้ต่อ BigSeller จริง</div>
+
+    <!-- 00 หน้าแรก -->
+    <section data-page="home" data-title="jojo" data-sub="เมนูหลัก">
+      <div class="hello"><img src="jojo.webp" alt="jojo"><div class="say"><div class="small">สวัสดี</div><div style="font-weight:900;font-size:15px" id="helloName">พนักงาน</div><div class="small" style="margin-top:3px">ปุ่มที่มีป้ายเขียว <b style="color:#2f9e5e">ใช้งานได้</b> ที่เหลือยังเป็นโครง</div></div></div>
+      <div class="tiles">
+        <a class="tile" href="#lock"><span class="no">1</span><span class="live">ใช้งานได้</span><div class="ic c1"><svg class="i"><use href="#lock"/></svg></div>ล็อกออเดอร์</a>
+        <a class="tile" href="#backorder"><span class="no">2</span><span class="live">ใช้งานได้</span><div class="ic c2"><svg class="i"><use href="#orders"/></svg></div>ของค้าง</a>
+        <a class="tile" href="#gtin"><span class="no">3</span><span class="live" style="background:var(--gold);color:var(--ink)">บางส่วน</span><div class="ic c3"><svg class="i"><use href="#tag"/></svg></div>เพิ่ม GTIN</a>
+        <a class="tile" href="#addsku"><span class="no">4</span><div class="ic c4"><svg class="i"><use href="#addsku"/></svg></div>เพิ่ม SKU</a>
+        <a class="tile" href="#stock"><span class="no">5</span><span class="live">ใช้งานได้</span><div class="ic c1"><svg class="i"><use href="#search"/></svg></div>ค้นหาสต็อก</a>
+        <a class="tile" href="#tasks"><span class="no">6</span><span class="live">ใช้งานได้</span><div class="ic c2"><svg class="i"><use href="#tasks"/></svg></div>งานมอบหมาย</a>
+        <a class="tile" href="#merge"><span class="no">7</span><span class="live" style="background:var(--gold);color:var(--ink)">บางส่วน</span><div class="ic c3"><svg class="i"><use href="#merge"/></svg></div>ยุบ / ย้ายกล่อง</a>
+        <a class="tile" href="#zone"><span class="no">8</span><span class="live">ใช้งานได้</span><div class="ic c4"><svg class="i"><use href="#qr"/></svg></div>เช็กโซนหยิบ</a>
+        <a class="tile" href="#auto"><span class="no">9</span><span class="live" style="background:var(--gold);color:var(--ink)">บางส่วน</span><div class="ic c1"><svg class="i"><use href="#auto"/></svg></div>Auto มอบหมาย</a>
+        <a class="tile wide" href="#reorder"><span class="live">ใช้งานได้</span><div class="ic c3"><svg class="i"><use href="#cart"/></svg></div>10 · รอสั่ง (ของหมดทุกโซน)</a>
+        <a class="tile wide" href="#shelves"><div class="ic c4"><svg class="i"><use href="#shelf"/></svg></div>ชั้นวาง · สร้างทีละหลายช่อง</a>
+      </div>
+    </section>
+
+    <!-- 1 ล็อกออเดอร์ -->
+    <section data-page="lock" data-title="ล็อกออเดอร์" data-sub="สแกนพัสดุ → สแกนสินค้าให้ครบ → ยืนยัน">
+      <form class="search" id="lkTrackForm">
+        <input class="input code" id="lkTrack" placeholder="สแกน / พิมพ์เลขพัสดุ" autocomplete="off" autocapitalize="characters" enterkeyhint="go">
+        <button class="btn purple" type="button" data-scan><svg class="i"><use href="#scan"/></svg></button>
+      </form>
+      <div id="lkMsg"></div>
+      <div id="lkOrder" hidden>
+        <div class="card" id="lkHead"></div>
+        <form class="search" id="lkItemForm">
+          <input class="input code" id="lkItem" placeholder="สแกน / พิมพ์บาร์โค้ดสินค้า" autocomplete="off" autocapitalize="characters" enterkeyhint="go">
+          <button class="btn purple" type="button" data-scan><svg class="i"><use href="#scan"/></svg></button>
+        </form>
+        <div class="card" style="padding:4px 12px" id="lkItems"></div>
+        <button class="btn deep full" id="lkConfirm" disabled><svg class="i"><use href="#lock"/></svg>ยืนยัน ล็อกออเดอร์</button>
+        <button class="btn white full" id="lkCancel">ยกเลิกออเดอร์นี้</button>
+        <div class="small" id="lkWriteNote" style="text-align:center;margin-top:6px"></div>
+      </div>
+      <div id="lkLog" style="margin-top:14px"></div>
+    </section>
+
+    <!-- 2 ของค้าง -->
+    <section data-page="backorder" data-title="ของค้าง" data-sub="ผ่าน QC = ออกแล้ว">
+      <div class="seg" id="boSeg"><button class="on" data-tab="pending">ยังไม่ออก</button><button data-tab="shipped">ออกแล้ว</button></div>
+      <div id="boOut"></div>
+      <div class="small" style="text-align:center">ออเดอร์ที่มีหมายเหตุ C / P · วันที่ในหมายเหตุ = วันสั่งของ → ของมาวันถัดไป</div>
+    </section>
+
+    <!-- 3 เพิ่ม GTIN -->
+    <section data-page="gtin" data-title="เพิ่ม GTIN" data-sub="ถ่ายป้าย → จับคู่กับ SKU">
+      <form class="search" id="gtCodeForm">
+        <input class="input code" id="gtCode" placeholder="สแกน / พิมพ์เลขใต้บาร์โค้ด" autocomplete="off" inputmode="numeric" enterkeyhint="go">
+        <button class="btn purple" type="button" data-scan="gtin"><svg class="i"><use href="#scan"/></svg></button>
+      </form>
+      <div class="small">สแกนบาร์โค้ด = ได้เลขใต้บาร์โค้ดเลย · WARRIX บาร์โค้ดเดียว · GRAND SPORT สแกน<b>ตัวบน</b></div>
+      <div id="gtMsg"></div>
+      <div id="gtPick" hidden>
+        <label class="lbl">ค้น SKU ที่จะผูก (พิมพ์รุ่น เช่น WA-242PLACL30 หรือ 010245)</label>
+        <form class="search" id="gtSkuForm"><input class="input code" id="gtSku" autocomplete="off" autocapitalize="characters" enterkeyhint="search"><button class="btn deep">ค้น</button></form>
+        <div id="gtList"></div>
+      </div>
+    </section>
+
+    <!-- 4 เพิ่ม SKU -->
+    <section data-page="addsku" data-title="เพิ่ม SKU ใหม่" data-sub="สร้างใน BigSeller จากมือถือ">
+      <span class="stub">ยังสร้างจริงไม่ได้ · รอหน้าเพิ่ม SKU ของ BigSeller</span>
+      <div class="card">
+        <label class="lbl" style="margin-top:0">บาร์โค้ด (เลขใต้บาร์โค้ด)</label>
+        <div class="search" style="margin:0"><input class="input code" id="asCode" autocomplete="off" inputmode="numeric"><button class="btn purple" type="button" data-scan="addsku"><svg class="i"><use href="#scan"/></svg></button></div>
+        <div id="asMsg"></div>
+        <label class="lbl">SKU</label><input class="input code" id="asSku" placeholder="เช่น WA-242PLACL30-V1-7L / 010245-ดำแดง-L" autocapitalize="characters">
+        <div class="grid2">
+          <div><label class="lbl">แบรนด์</label><input class="input" id="asBrand" list="brandList"></div>
+          <div><label class="lbl">ชื่อสินค้า</label><input class="input" id="asTitle"></div>
+        </div>
+        <datalist id="brandList"><option>WARRIX</option><option>GRAND SPORT</option><option>EGO SPORT</option></datalist>
+      </div>
+      <button class="btn deep full" disabled><svg class="i"><use href="#addsku"/></svg>สร้าง SKU ใน BigSeller</button>
+      <div class="small" style="text-align:center;margin-top:6px">ปุ่มจะใช้ได้เมื่อได้คำสั่งสร้าง SKU ของ BigSeller (ส่งภาพหน้าเพิ่ม SKU ให้ Claude)</div>
+    </section>
+
+    <!-- 5 ค้นหาสต็อก (ของจริง) -->
+    <section data-page="stock" data-title="ค้นหาสต็อก" data-sub="อยู่ไหน · มีไหม">
+      <form class="search" id="fSearch">
+        <input class="input" id="q" type="search" placeholder="SKU / บาร์โค้ด / ชื่อสินค้า" autocomplete="off" enterkeyhint="search">
+        <button class="btn purple" type="button" data-scan><svg class="i"><use href="#scan"/></svg></button>
+        <button class="btn deep" id="bSearch">ค้น</button>
+      </form>
+      <div id="out"></div>
+    </section>
+
+    <!-- 6 งานมอบหมาย -->
+    <section data-page="tasks" data-title="งานมอบหมาย" data-sub="แผนย้ายสินค้าของ BigSeller">
+      <div class="seg" id="tkSeg"><button class="on" data-state="0">รอทำ</button><button data-state="1">ทำแล้ว</button></div>
+      <div id="tkOut"></div>
+      <div class="small" style="text-align:center">ดึงจาก "แผนย้ายสินค้า" ของ BigSeller (คลังออนไลน์) · อ่านอย่างเดียว</div>
+    </section>
+
+    <!-- 7 ยุบ / ย้ายกล่อง -->
+    <section data-page="merge" data-title="ยุบกล่อง" data-sub="รวม 2 กล่อง เลือกเก็บเลขไหนก็ได้">
+      <form id="mgForm" class="card">
+        <label class="lbl" style="margin-top:0">กล่อง A</label>
+        <div class="search" style="margin:0"><input class="input code" id="mgA" placeholder="เช่น H-01-05-05 PP" autocapitalize="characters"><button class="btn purple" type="button" data-scan="mgA"><svg class="i"><use href="#scan"/></svg></button></div>
+        <label class="lbl">กล่อง B</label>
+        <div class="search" style="margin:0"><input class="input code" id="mgB" placeholder="เช่น H-02-04-13 PP" autocapitalize="characters"><button class="btn purple" type="button" data-scan="mgB"><svg class="i"><use href="#scan"/></svg></button></div>
+        <button class="btn deep full">ตรวจ 2 กล่อง</button>
+      </form>
+      <div id="mgOut"></div>
+    </section>
+
+    <!-- 8 เช็กโซนหยิบ -->
+    <section data-page="zone" data-title="เช็กโซนหยิบ" data-sub="เจอกล่องว่าง → สแกน QR ที่กล่อง">
+      <button class="btn deep full" style="margin:0 0 12px" data-scan="zone"><svg class="i"><use href="#qr"/></svg>สแกน QR กล่องว่าง</button>
+      <form class="search" id="zoneForm"><input class="input code" id="zoneBox" placeholder="หรือพิมพ์ชื่อกล่อง/ชั้นวาง" autocapitalize="characters"><button class="btn">ตรวจ</button></form>
+      <div id="zoneMsg"></div>
+      <div class="small">สแกนแล้วระบบหาของมาเติมให้ (C- → K- → H-) แล้วพาไปหน้า Auto มอบหมาย</div>
+    </section>
+
+    <!-- 9 Auto มอบหมาย -->
+    <section data-page="auto" data-title="Auto มอบหมาย" data-sub="หาของมาเติม C- → K- → H-">
+      <div id="autoOut"><div class="msg info">ยังไม่มีกล่องว่าง — สแกนที่หน้า เช็กโซนหยิบ ก่อน</div></div>
+      <label class="lbl">มอบหมายให้ (บัญชีย่อย BigSeller)</label>
+      <select class="input" id="autoWho"></select>
+      <button class="btn deep full" disabled><svg class="i"><use href="#auto"/></svg>มอบหมาย</button>
+      <div class="small" style="text-align:center;margin-top:6px">ปุ่มมอบหมายจะใช้ได้เมื่อได้คำสั่งสร้างแผนย้ายสินค้า + รายชื่อบัญชีย่อยของ BigSeller</div>
+    </section>
+
+    <!-- 10 รอสั่ง -->
+    <section data-page="reorder" data-title="รอสั่ง" data-sub="ไม่มีของใน C- · K- · H-">
+      <div class="seg" id="roSeg"><button class="on" data-done="0">รอสั่ง</button><button data-done="1">สั่งแล้ว</button></div>
+      <div id="roOut"></div>
+    </section>
+
+    <!-- ชั้นวาง: สร้างทีละหลายช่อง -->
+    <section data-page="shelves" data-title="ชั้นวาง" data-sub="สร้างทีละหลายช่องใน BigSeller">
+      <span class="stub">โครง · ยังไม่ได้ต่อคำสั่งสร้างของ BigSeller</span>
+      <div class="card">
+        <div class="grid2">
+          <div><label class="lbl" style="margin-top:0">คลัง</label><select class="input"><option>ออนไลน์</option></select></div>
+          <div><label class="lbl" style="margin-top:0">โซน</label><select class="input"><option>เก็บ</option><option>หยิบ</option><option>จริง</option></select></div>
+        </div>
+        <label class="lbl">ชื่อขึ้นต้น</label><input class="input code" id="shPre" value="C-13-">
+        <div class="grid2">
+          <div><label class="lbl">เลขเริ่ม</label><input class="input code" id="shFrom" value="01" inputmode="numeric"></div>
+          <div><label class="lbl">ถึงเลข</label><input class="input code" id="shTo" value="20" inputmode="numeric"></div>
+        </div>
+        <div class="msg info" id="shPreview"></div>
+      </div>
+      <button class="btn deep full" disabled><svg class="i"><use href="#shelf"/></svg>สร้างชั้นวาง</button>
+    </section>
+  </div>
+
+  <nav class="nav"><div class="nav-in">
+    <a href="#home" data-nav="home"><svg class="i"><use href="#home"/></svg>หน้าแรก</a>
+    <a href="#backorder" data-nav="backorder lock"><svg class="i"><use href="#orders"/></svg>ออเดอร์</a>
+    <button class="scan" data-scan aria-label="สแกน"><svg class="i"><use href="#scan"/></svg></button>
+    <a href="#tasks" data-nav="tasks auto"><svg class="i"><use href="#tasks"/></svg>งาน</a>
+    <a href="#stock" data-nav="stock merge zone shelves reorder"><svg class="i"><use href="#search"/></svg>สต็อก</a>
+  </div></nav>
+
+  <!-- กล้องสแกน: กล้องสดอ่านบาร์โค้ด/QR (ZXing) — ใช้ได้เฉพาะหน้า https -->
+  <section class="scanner" id="scanner" hidden>
+    <video id="scanVideo" playsinline muted></video>
+    <div class="scan-top">
+      <div><div class="scan-kicker">jojo · สแกน</div><div class="title" id="scanTitle">เล็งบาร์โค้ดให้อยู่ในกรอบ</div></div>
+      <button class="close" id="scanClose" aria-label="ปิดกล้อง">✕</button>
+    </div>
+    <div class="aim"><i class="k1"></i><i class="k2"></i><i class="k3"></i><i class="k4"></i><b class="laser"></b></div>
+    <div class="gogo-l">ゴ<br>ゴ<br>ゴ</div><div class="gogo-r">ゴ<br>ゴ</div>
+    <div class="res" id="scanMsg">กำลังเปิดกล้อง…</div>
+  </section>
+</div>
+
+<script src="vendor/zxing.min.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+async function api(p, opts) {
+  const r = await fetch(p, opts);
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401 && !p.startsWith('/api/login')) { show('login'); throw new Error(j.error || 'ล็อกอินใหม่'); }
+  if (!r.ok) throw Object.assign(new Error(j.error || 'ผิดพลาด'), { body: j });
+  return j;
+}
+const post = (p, body) => api(p, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+
+// ---------- ล็อกอิน: เซิร์ฟเวอร์เปิดหน้า BigSeller ไว้ แล้วส่งรูปรหัสยืนยันมาให้คนกรอกเอง ----------
+let loginId = null;
+function setCaptcha(src) { $('capRow').hidden = !src; if (src) { $('capImg').src = src; $('c').value = ''; } }
+async function startLogin() {
+  loginId = null; setCaptcha(null);
+  $('bLogin').disabled = true; $('bLogin').textContent = 'กำลังเปิดหน้า BigSeller…';
+  try { const s = await post('/api/login/start'); loginId = s.loginId; setCaptcha(s.captcha); }
+  catch (err) { $('loginMsg').textContent = err.message; $('loginMsg').hidden = false; }
+  $('bLogin').disabled = false; $('bLogin').textContent = 'เข้าสู่ระบบ';
+}
+function show(v) {
+  if (v === 'login' && $('vLogin').hidden) startLogin();
+  $('vLogin').hidden = v !== 'login'; $('vApp').hidden = v !== 'app';
+}
+async function boot() {
+  try { const me = await api('/api/me'); $('who').textContent = me.user; $('helloName').textContent = me.user; $('mockNote').hidden = !me.mock; show('app'); route(); }
+  catch { show('login'); }
+}
+$('bCap').onclick = async () => {
+  try { setCaptcha((await post('/api/login/captcha', { loginId })).captcha); }
+  catch (err) { $('loginMsg').textContent = err.message; $('loginMsg').hidden = false; startLogin(); }
+};
+$('fLogin').onsubmit = async (e) => {
+  e.preventDefault();
+  if (!$('agree').checked) { $('loginMsg').textContent = 'ติ๊กยอมรับเงื่อนไขของ BigSeller ก่อน'; $('loginMsg').hidden = false; return; }
+  $('bLogin').disabled = true; $('bLogin').textContent = 'กำลังล็อกอิน BigSeller…'; $('loginMsg').hidden = true;
+  try {
+    await post('/api/login', { loginId, username: $('u').value, password: $('p').value, captcha: $('c').value, agree: true });
+    $('p').value = '';
+    await boot();
+  } catch (err) {
+    $('loginMsg').textContent = err.message; $('loginMsg').hidden = false;
+    // ได้รูปรหัสใหม่ = ลองต่อในหน้าเดิม · ไม่ได้ = หน้าล็อกอินของเซิร์ฟเวอร์ปิดไปแล้ว เปิดใหม่ (ข้อความผิดยังค้างให้อ่าน)
+    if (err.body && err.body.captcha) setCaptcha(err.body.captcha);
+    else { const m = err.message; await startLogin(); $('loginMsg').textContent = m; $('loginMsg').hidden = false; }
+  }
+  $('bLogin').disabled = false; $('bLogin').textContent = 'เข้าสู่ระบบ';
+};
+$('bOut').onclick = async () => { await fetch('/api/logout', { method: 'POST' }); show('login'); };
+
+// ---------- หน้า (#home, #stock …) ----------
+function route() {
+  const id = (location.hash || '#home').slice(1);
+  const sec = document.querySelector('[data-page="' + id + '"]') || document.querySelector('[data-page="home"]');
+  document.querySelectorAll('[data-page]').forEach(s => s.hidden = s !== sec);
+  const home = sec.dataset.page === 'home';
+  $('topTitle').textContent = sec.dataset.title; $('topSub').textContent = sec.dataset.sub || '';
+  $('topLogo').hidden = !home; $('topBack').hidden = home;
+  document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('on', a.dataset.nav.split(' ').includes(sec.dataset.page)));
+  window.scrollTo(0, 0);
+  if (sec.dataset.page === 'stock') setTimeout(() => $('q').focus(), 50);
+  onPage(sec.dataset.page);
+}
+addEventListener('hashchange', route);
+
+// ---------- กล้องสแกน (ย้ายมาจากแอพ jojo เดิม) ----------
+// อ่านเฟรมจากกล้องเองทุก 150 มิลลิวินาที (โหมดต่อเนื่องของ ZXing ไม่เรียก callback ในบางเครื่อง)
+// onCode(code) คืน true = พอแล้ว ปิดกล้อง · คืน false = สแกนต่อ (ยิงสินค้าหลายชิ้น)
+let scanCb = null, lastCode = '', lastAt = 0, stream = null, scanTimer = null;
+const frame = document.createElement('canvas');
+let mfr = null;
+function closeScanner() {
+  clearTimeout(scanTimer); scanTimer = null;
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; $('scanVideo').srcObject = null;
+  $('scanner').hidden = true; $('scanner').className = 'scanner'; scanCb = null;
+}
+function scanSay(t, kind) { if ($('scanner').hidden || !t) return; $('scanMsg').textContent = t; $('scanner').className = 'scanner ' + (kind || ''); }
+function tick() {
+  if (!stream || !scanCb) return;
+  const v = $('scanVideo');
+  if (v.videoWidth) {
+    frame.width = v.videoWidth; frame.height = v.videoHeight;
+    frame.getContext('2d', { willReadFrequently: true }).drawImage(v, 0, 0);
+    let code = '';
+    try { code = mfr.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.HTMLCanvasElementLuminanceSource(frame)))).getText(); } catch { /* เฟรมนี้ไม่เจอบาร์โค้ด */ }
+    const now = Date.now();
+    if (code && !(code === lastCode && now - lastAt < 1500)) { // บาร์โค้ดเดิมค้างหน้ากล้อง ไม่นับซ้ำ
+      lastCode = code; lastAt = now;
+      if (scanCb(code)) return closeScanner();
+    }
+  }
+  scanTimer = setTimeout(tick, 150);
+}
+async function openScanner(onCode, title) {
+  scanCb = onCode;
+  $('scanner').hidden = false; $('scanner').className = 'scanner';
+  $('scanTitle').textContent = title || 'เล็งบาร์โค้ดให้อยู่ในกรอบ';
+  $('scanMsg').textContent = 'กำลังเปิดกล้อง…';
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    $('scanMsg').textContent = 'หน้านี้เปิดกล้องไม่ได้ — ต้องเปิด jojo แบบ https'; return;
+  }
+  if (!mfr) { mfr = new ZXing.MultiFormatReader(); mfr.setHints(new Map([[ZXing.DecodeHintType.TRY_HARDER, true]])); }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+    if (!scanCb) return closeScanner(); // กดปิดระหว่างรออนุญาตกล้อง
+    $('scanVideo').srcObject = stream;
+    await $('scanVideo').play();
+    $('scanMsg').textContent = title || 'เล็งบาร์โค้ดให้อยู่ในกรอบ';
+    tick();
+  } catch (e) {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    $('scanMsg').textContent = /NotAllowed|Permission/i.test(e && e.name) ? 'ไม่ได้อนุญาตให้ใช้กล้อง — กดรูปแม่กุญแจข้างที่อยู่เว็บ แล้วอนุญาตกล้อง'
+      : /NotFound|Overconstrained/i.test(e && e.name) ? 'ไม่พบกล้องในเครื่องนี้' : 'เปิดกล้องไม่ได้: ' + (e && (e.message || e.name));
+  }
+}
+$('scanClose').onclick = closeScanner;
+const beep = (ok) => {
+  try { navigator.vibrate && navigator.vibrate(ok ? 60 : [120, 60, 120]); } catch { /* ข้าม */ }
+  try {
+    const a = beep.ctx || (beep.ctx = new (window.AudioContext || window.webkitAudioContext)());
+    const o = a.createOscillator(), g = a.createGain();
+    o.frequency.value = ok ? 1200 : 300; g.gain.value = 0.15; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + (ok ? 0.08 : 0.3));
+  } catch { /* ข้าม */ }
+};
+// ปุ่มสแกนแต่ละที่: หน้าล็อกออเดอร์ = สแกนพัสดุแล้วสแกนสินค้าต่อเนื่อง · ที่อื่น = ค้นหาสต็อก
+const currentPage = () => (location.hash || '#home').slice(1);
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-scan]'); if (!b) return;
+  e.preventDefault();
+  if (currentPage() === 'lock') return openScanner(lockCode, order ? 'สแกนสินค้า (สแกนต่อได้เรื่อย ๆ)' : 'สแกนเลขพัสดุ แล้วสแกนสินค้าต่อได้เลย');
+  const fill = (id, then) => openScanner(code => { beep(true); $(id).value = code; if (then) then(code); return true; });
+  if (b.dataset.scan === 'zone') return openScanner(code => { beep(true); $('zoneBox').value = code; zoneCheck(code); return true; }, 'สแกน QR ที่กล่องว่าง');
+  if (b.dataset.scan === 'gtin') return fill('gtCode', gtinOpen);
+  if (b.dataset.scan === 'addsku') return fill('asCode', asCheck);
+  if (b.dataset.scan === 'mgA' || b.dataset.scan === 'mgB') return fill(b.dataset.scan);
+  openScanner(code => { beep(true); location.hash = 'stock'; $('q').value = code; $('fSearch').requestSubmit(); return true; }, 'สแกนสินค้าเพื่อค้นสต็อก');
+});
+document.querySelectorAll('.seg').forEach(seg => seg.onclick = (e) => { if (e.target.tagName === 'BUTTON') seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target)); });
+
+// ---------- 1 ล็อกออเดอร์ (ย้ายมาจากแอพ jojo เดิม app.js) ----------
+// เครื่องยิงบลูทูธตอนแป้นมือถือเป็นภาษาไทย → ได้ตัวไทยแทน (เช่น TH266 = ธ็/ุุ) แปลงกลับเป็นปุ่มอังกฤษ (แป้นเกษมณี)
+const TH_KEYS = {
+  'ๅ': '1', '/': '2', '-': '3', 'ภ': '4', 'ถ': '5', 'ุ': '6', 'ึ': '7', 'ค': '8', 'ต': '9', 'จ': '0', 'ข': '-', 'ช': '=',
+  'ๆ': 'q', 'ไ': 'w', 'ำ': 'e', 'พ': 'r', 'ะ': 't', 'ั': 'y', 'ี': 'u', 'ร': 'i', 'น': 'o', 'ย': 'p', 'บ': '[', 'ล': ']', 'ฃ': '\\',
+  'ฟ': 'a', 'ห': 's', 'ก': 'd', 'ด': 'f', 'เ': 'g', '้': 'h', '่': 'j', 'า': 'k', 'ส': 'l', 'ว': ';', 'ง': "'",
+  'ผ': 'z', 'ป': 'x', 'แ': 'c', 'อ': 'v', 'ิ': 'b', 'ื': 'n', 'ท': 'm', 'ม': ',', 'ใ': '.', 'ฝ': '/',
+  '+': '!', '๑': '@', '๒': '#', '๓': '$', '๔': '%', 'ู': '^', '฿': '&', '๕': '*', '๖': '(', '๗': ')', '๘': '_', '๙': '+',
+  '๐': 'Q', '"': 'W', 'ฎ': 'E', 'ฑ': 'R', 'ธ': 'T', 'ํ': 'Y', '๊': 'U', 'ณ': 'I', 'ฯ': 'O', 'ญ': 'P', 'ฐ': '{', ',': '}', 'ฅ': '|',
+  'ฤ': 'A', 'ฆ': 'S', 'ฏ': 'D', 'โ': 'F', 'ฌ': 'G', '็': 'H', '๋': 'J', 'ษ': 'K', 'ศ': 'L', 'ซ': ':', '.': '"',
+  '(': 'Z', ')': 'X', 'ฉ': 'C', 'ฮ': 'V', 'ฺ': 'B', '์': 'N', '?': 'M', 'ฒ': '<', 'ฬ': '>', 'ฦ': '?'
+};
+// แปลงเฉพาะเมื่อไม่มีตัวอังกฤษเลยแต่มีตัวไทย (SKU อย่าง 010245-ดำแดง-L มีทั้งไทยและอังกฤษ → ไม่แปลง)
+const fixThaiLayout = (s) => /[฀-๿]/.test(s) && !/[A-Za-z0-9]/.test(s) ? [...s].map(ch => TH_KEYS[ch] ?? ch).join('') : s;
+const norm = (s) => String(s || '').toUpperCase().replace(/[\s\-_.]/g, '');
+let order = null, lkBusy = false;
+const lockLog = [];
+const lkDone = () => !!order && order.items.every(i => i.scanned >= i.qty);
+// ระหว่างเปิดกล้อง ข้อความโดนกล้องบัง → ขึ้นบนแถบกล้องด้วย + เสียง/สั่น ตามผล
+function lkNote(text, kind) {
+  $('lkMsg').innerHTML = text ? '<div class="msg ' + (kind || 'info') + '">' + esc(text) + '</div>' : '';
+  scanSay(text, kind);
+  if (kind === 'ok' || kind === 'bad') beep(kind === 'ok');
+}
+// กล้องเดียวยิงต่อเนื่อง: ยังไม่มีออเดอร์ = เลขพัสดุ → ดึงออเดอร์ แล้วโค้ดถัดไป = สินค้า · ครบแล้วปิดกล้อง (ไปกดยืนยัน)
+function lockCode(code) {
+  if (lkBusy) return false;
+  if (!order) { $('lkTrack').value = code; loadOrder(code); return false; }
+  if (norm(code) === norm(order.trackingNo)) return false;
+  scanItem(code);
+  return lkDone();
+}
+function drawOrder(flash) {
+  $('lkOrder').hidden = !order;
+  if (!order) return;
+  const tot = order.items.reduce((s, i) => s + i.qty, 0), got = order.items.reduce((s, i) => s + Math.min(i.scanned, i.qty), 0);
+  $('lkHead').innerHTML = '<div class="row between"><div><div class="small">เลขพัสดุ' + (order.shippingMethod ? ' · ' + esc(order.shippingMethod) : '') + '</div><div class="code" style="font-size:18px">' + esc(order.trackingNo) + '</div></div>' +
+    '<span class="badge ' + (got >= tot ? 'green' : 'gold') + '">' + (got >= tot ? 'ครบแล้ว' : 'กำลังแพ็ก') + '</span></div>' +
+    '<div class="row between" style="margin-top:10px"><b>ตรวจสินค้า</b><b>' + got + '/' + tot + ' ชิ้น</b></div><div class="progress"><span style="width:' + Math.round(got / tot * 100) + '%"></span></div>';
+  $('lkItems').innerHTML = order.items.map(i => '<div class="list-row"' + (i.merchantSku === flash ? ' style="background:var(--warn-bg);margin:0 -12px;padding:9px 12px"' : '') + '>' +
+    (i.image ? '<img class="thumb" src="' + esc(i.image) + '" alt="" referrerpolicy="no-referrer" style="object-fit:cover">' : '<div class="thumb"><svg class="i"><use href="#box"/></svg></div>') +
+    '<div class="info"><div class="name code">' + esc(i.merchantSku || i.productCode) + '</div><div class="sub">' + (i.subFrom ? '<b style="color:var(--purple)">แทน ' + esc(i.subFrom) + '</b> · ' : '') + esc(i.name) + '</div></div>' +
+    '<span class="badge ' + (i.scanned >= i.qty ? 'green' : i.scanned ? 'purple' : '') + '">' + (i.scanned >= i.qty ? '✓ ' : '') + i.scanned + '/' + i.qty + '</span></div>').join('');
+  $('lkConfirm').disabled = !lkDone() || lkBusy;
+}
+async function loadOrder(t) {
+  t = fixThaiLayout(String(t || '').trim());
+  if (!t || lkBusy) return;
+  lkBusy = true; order = null; drawOrder();
+  lkNote('กำลังดึงออเดอร์ ' + t + ' จาก BigSeller…', 'info');
+  try {
+    const r = await post('/api/lock/scan', { trackingNo: t });
+    const items = (r.items || []).filter(i => i.qty > 0).map(i => ({ ...i, scanned: 0 }));
+    if (!items.length) throw new Error('ออเดอร์นี้ไม่มีสินค้าให้สแกน (BigSeller ยังจัดสรรสต็อกไม่เสร็จ?)');
+    order = { ...r, items };
+    $('lkWriteNote').textContent = r.canWrite ? '' : 'ตัวทดลอง: ปุ่มยืนยันยังไม่บันทึกลง BigSeller จริง';
+    lkNote('ดึงออเดอร์ ' + order.trackingNo + ' แล้ว (' + items.length + ' รายการ' + (r.subN ? ' · มีสินค้าทดแทน ' + r.subN : '') + ') สแกนสินค้าให้ครบ' + (r.subWarn ? ' · ⚠ ' + r.subWarn : ''), r.subWarn ? 'info' : 'ok');
+    setTimeout(() => $('lkItem').focus(), 50);
+  } catch (e) { lkNote('✕ ' + e.message, 'bad'); $('lkTrack').select(); }
+  lkBusy = false; drawOrder();
+}
+function scanItem(code) {
+  if (!order) return;
+  code = fixThaiLayout(code);
+  const c = norm(code);
+  if (c === norm(order.trackingNo)) return; // ป้ายพัสดุยังอยู่หน้ากล้อง ไม่นับเป็นสินค้า
+  const it = order.items.find(i => norm(i.merchantSku) === c || norm(i.productCode) === c || (i.gtins || []).some(g => norm(g) === c));
+  if (!it) return lkNote('✕ [' + code + '] ไม่อยู่ในออเดอร์นี้', 'bad');
+  if (it.scanned >= it.qty) return lkNote('⚠ ' + it.merchantSku + ' ครบจำนวนแล้ว', 'bad');
+  it.scanned++;
+  lkNote(lkDone() ? '✓ ครบแล้ว กด ยืนยัน ล็อกออเดอร์' : '✓ ' + it.merchantSku + ' (' + it.scanned + '/' + it.qty + ')', 'ok');
+  drawOrder(it.merchantSku);
+}
+function resetLock() { order = null; drawOrder(); $('lkTrack').value = ''; $('lkItem').value = ''; $('lkTrack').focus(); }
+$('lkTrackForm').onsubmit = (e) => { e.preventDefault(); loadOrder($('lkTrack').value); };
+$('lkItemForm').onsubmit = (e) => { e.preventDefault(); const v = $('lkItem').value.trim(); $('lkItem').value = ''; if (v) scanItem(v); };
+$('lkCancel').onclick = () => { if (!order || confirm('ยกเลิกออเดอร์นี้? (ยังไม่ได้ล็อก)')) { resetLock(); lkNote(''); } };
+$('lkConfirm').onclick = async () => {
+  if (!lkDone() || lkBusy) return;
+  lkBusy = true; drawOrder();
+  const t = order.trackingNo;
+  lkNote('กำลังล็อกออเดอร์ ' + t + ' ใน BigSeller…', 'info');
+  try {
+    const r = await post('/api/lock/confirm', { trackingNo: t, orderId: order.orderId, shippingMethod: order.shippingMethod, items: order.items.map(i => ({ sku: i.merchantSku || i.productCode, qty: i.qty })) });
+    lockLog.unshift({ t, ok: r.ok, msg: r.msg, at: Date.now() });
+    lkBusy = false;
+    if (r.ok) { resetLock(); lkNote('🔒 ' + t + ' ล็อกแล้ว (ตรวจสอบแล้วใน BigSeller)', 'ok'); }
+    else lkNote('⚠ ไม่ได้ล็อก: ' + r.msg, 'bad');
+  } catch (e) { lkNote('✕ ' + e.message, 'bad'); }
+  lkBusy = false; drawOrder();
+  $('lkLog').innerHTML = lockLog.length ? '<div class="small" style="margin-bottom:4px">ล็อกในเครื่องนี้วันนี้</div><div class="card" style="padding:4px 12px">' + lockLog.slice(0, 20).map(x => '<div class="list-row"><span class="code info">' + esc(x.t) + '</span><span class="badge ' + (x.ok ? 'green' : 'red') + '">' + (x.ok ? '🔒 ล็อกแล้ว' : 'ไม่สำเร็จ') + '</span><span class="small">' + new Date(x.at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + '</span></div>').join('') + '</div>' : '';
+};
+
+// ---------- หน้าอื่น ๆ ----------
+const msgHtml = (t, kind) => '<div class="msg ' + (kind || 'info') + '">' + esc(t) + '</div>';
+const loading = (id) => { $(id).innerHTML = '<div class="small">กำลังดึงจาก BigSeller…</div>'; };
+const fmtDay = (ms) => { const d = new Date(ms); return d.getDate() + '/' + (d.getMonth() + 1); };
+const segVal = (id, k) => (document.querySelector('#' + id + ' .on') || {}).dataset?.[k];
+
+// 2 ของค้าง
+async function loadBackorders() {
+  loading('boOut');
+  try {
+    const tab = segVal('boSeg', 'tab') || 'pending';
+    const list = await api('/api/backorders?tab=' + tab);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    $('boOut').innerHTML = list.length ? list.map(o => {
+      const days = o.eta ? Math.round((o.eta - today) / 864e5) : null;
+      const etaTxt = !o.eta ? 'ไม่มีวันที่ในหมายเหตุ' : o.overdue ? 'ของควรมา ' + fmtDay(o.eta) : 'ของมา ' + fmtDay(o.eta);
+      const badge = tab === 'shipped' ? '<span class="badge green">ออกแล้ว</span>' : o.overdue ? '<span class="badge red">เลยกำหนด</span>' : days === 1 ? '<span class="badge purple">มาพรุ่งนี้</span>' : days === 0 ? '<span class="badge purple">มาวันนี้</span>' : '<span class="badge gold">ยังไม่ออก</span>';
+      return '<div class="card"' + (o.overdue ? ' style="border-color:var(--bad)"' : '') + '><div class="row between"><span class="code">#' + esc(o.orderNo || o.id) + '</span>' + badge + '</div>' +
+        '<div class="row between" style="margin-top:6px"><span class="eta"' + (o.overdue ? ' style="color:var(--bad)"' : '') + '>' + etaTxt + '</span><span class="small">' + esc(o.trackingNo) + '</span></div>' +
+        o.remarks.filter(r => r.k === 'C' || r.k === 'P').map(r => '<div class="remark"><i class="r' + r.k + '">' + r.k + '</i><span>' + esc(r.text) + '</span></div>').join('') + '</div>';
+    }).join('') : msgHtml(tab === 'shipped' ? 'ยังไม่มีของค้างที่ออกแล้ว' : 'ไม่มีของค้าง 🎉', 'ok');
+  } catch (e) { $('boOut').innerHTML = msgHtml('✕ ' + e.message, 'bad'); }
+}
+$('boSeg').addEventListener('click', () => setTimeout(loadBackorders));
+
+// 3 เพิ่ม GTIN: สแกนบาร์โค้ด → มีเจ้าของแล้วไหม → ค้น SKU ตามรุ่น → ผูก
+let gtCode = '';
+async function gtinOpen(code) {
+  code = fixThaiLayout(String(code || '').trim()); gtCode = code;
+  $('gtPick').hidden = true; $('gtList').innerHTML = '';
+  if (!code) return;
+  if (!/^[A-Za-z0-9-]{4,40}$/.test(code)) { $('gtMsg').innerHTML = msgHtml('บาร์โค้ดนี้ใช้เป็น GTIN ไม่ได้', 'bad'); return; }
+  $('gtMsg').innerHTML = msgHtml('กำลังเช็กบาร์โค้ด ' + code + '…');
+  try {
+    const own = await api('/api/gtin/owner?code=' + encodeURIComponent(code));
+    if (own.length) { $('gtMsg').innerHTML = msgHtml('✓ ' + code + ' ผูกกับ ' + own.map(o => o.sku).join(', ') + ' อยู่แล้ว', 'ok'); return; }
+    $('gtMsg').innerHTML = msgHtml(code + ' ยังไม่ผูกกับ SKU ไหน — ค้นรุ่นแล้วเลือก SKU', 'info');
+    $('gtPick').hidden = false; $('gtSku').focus();
+  } catch (e) { $('gtMsg').innerHTML = msgHtml('✕ ' + e.message, 'bad'); }
+}
+$('gtCodeForm').onsubmit = (e) => { e.preventDefault(); gtinOpen($('gtCode').value); };
+$('gtSkuForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const q = $('gtSku').value.trim(); if (!q) return;
+  loading('gtList');
+  try {
+    const rows = await api('/api/sku/search?q=' + encodeURIComponent(q));
+    $('gtList').innerHTML = rows.length ? '<div class="card" style="padding:4px 12px">' + rows.slice(0, 30).map(r => '<div class="list-row"><div class="info"><div class="name code">' + esc(r.sku) + '</div><div class="sub">' + esc(r.brand || r.title) + ' · ' + (r.gtins.length ? 'มีบาร์โค้ด ' + r.gtins.map(esc).join(', ') : 'ยังไม่มีบาร์โค้ด') + '</div></div>' +
+      '<button class="btn sm" data-gt-id="' + esc(r.id) + '" data-gt-sku="' + esc(r.sku) + '" data-gt-group="' + r.isGroup + '">ผูก</button></div>').join('') + '</div>' : msgHtml('ไม่พบ SKU', 'bad');
+  } catch (err) { $('gtList').innerHTML = msgHtml('✕ ' + err.message, 'bad'); }
+};
+$('gtList').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-gt-id]'); if (!b) return;
+  if (!confirm('ผูกบาร์โค้ด ' + gtCode + ' ให้ ' + b.dataset.gtSku + ' ใน BigSeller?')) return;
+  b.disabled = true; $('gtMsg').innerHTML = msgHtml('กำลังบันทึกใน BigSeller… (ประมาณ 10 วิ)');
+  try {
+    const r = await post('/api/gtin/add', { skuId: b.dataset.gtId, sku: b.dataset.gtSku, isGroup: +b.dataset.gtGroup, gtin: gtCode });
+    $('gtMsg').innerHTML = r.ok ? msgHtml('✓ ผูก ' + gtCode + ' ให้ ' + r.sku + ' แล้ว', 'ok') : msgHtml('⚠ ไม่ได้ผูก: ' + r.msg, 'bad');
+    if (r.ok) { $('gtPick').hidden = true; beep(true); }
+  } catch (err) { $('gtMsg').innerHTML = msgHtml('✕ ' + err.message, 'bad'); }
+  b.disabled = false;
+});
+
+// 4 เพิ่ม SKU: เช็กว่าบาร์โค้ดมีเจ้าของแล้วหรือยัง (สร้างจริงรอคำสั่งของ BigSeller)
+async function asCheck(code) {
+  code = fixThaiLayout(String(code || '').trim()); if (!code) return;
+  try {
+    const own = await api('/api/gtin/owner?code=' + encodeURIComponent(code));
+    $('asMsg').innerHTML = own.length ? msgHtml('บาร์โค้ดนี้มี SKU แล้ว: ' + own.map(o => o.sku).join(', '), 'bad') : msgHtml('✓ บาร์โค้ดนี้ยังไม่มี SKU — เพิ่มใหม่ได้', 'ok');
+  } catch (e) { $('asMsg').innerHTML = msgHtml('✕ ' + e.message, 'bad'); }
+}
+$('asCode').onchange = () => asCheck($('asCode').value);
+$('asSku').oninput = () => { const s = $('asSku').value.toUpperCase(); if (!$('asBrand').value) $('asBrand').value = /^WA-/.test(s) ? 'WARRIX' : /^\d{5,6}-/.test(s) ? 'GRAND SPORT' : ''; };
+
+// 6 งานมอบหมาย: แผนย้ายสินค้าของ BigSeller (ชื่อช่องยังไม่ยืนยัน → แสดงช่องที่มีค่า)
+async function loadTasks() {
+  loading('tkOut');
+  try {
+    const d = await api('/api/tasks?state=' + (segVal('tkSeg', 'state') || 0));
+    const pick = (r, ks) => { for (const k of ks) if (r[k] != null && r[k] !== '') return r[k]; return ''; };
+    $('tkOut').innerHTML = d.rows.length ? d.rows.map(r => '<div class="card"><div class="row between"><span class="code">' + esc(pick(r, ['planNo', 'movingPlanNo', 'code', 'id'])) + '</span><span class="badge purple">' + esc(pick(r, ['stateName', 'statusName', 'state'])) + '</span></div>' +
+      '<div class="sub" style="margin-top:4px">' + esc(pick(r, ['createUserName', 'creator', 'operatorName', 'createBy'])) + ' · ' + esc(pick(r, ['createTimeStr', 'createTime'])) + '</div>' +
+      '<div class="small">' + esc(Object.entries(r).filter(([k, v]) => v != null && v !== '' && typeof v !== 'object').slice(0, 8).map(([k, v]) => k + ': ' + v).join(' · ')) + '</div></div>').join('')
+      : msgHtml('ไม่มีแผนย้ายสินค้าในสถานะนี้', 'ok');
+  } catch (e) { $('tkOut').innerHTML = msgHtml('✕ ' + e.message, 'bad'); }
+}
+$('tkSeg').addEventListener('click', () => setTimeout(loadTasks));
+
+// 7 ยุบกล่อง
+let mgKeep = 'a';
+function boxCard(x, keep, which) {
+  return '<div class="boxcard' + (keep ? ' keep' : '') + '" data-keep="' + which + '" style="cursor:pointer"><div class="small">' + (keep ? 'เก็บไว้ ✓' : 'จะว่าง') + '</div><div class="bn code">' + esc(x.name) + '</div>' +
+    '<div class="sub">' + esc(x.zone ? 'โซน ' + x.zone : '') + ' · ' + x.items.length + ' SKU</div>' +
+    x.items.map(i => '<div class="small" style="margin-top:3px"><span class="code">' + esc(i.sku) + '</span> · ' + esc(i.qty) + '</div>').join('') + '</div>';
+}
+let mgLast = null;
+function drawMerge() {
+  const d = mgLast; if (!d) return;
+  const keep = mgKeep === 'a' ? d.a : d.b, gone = mgKeep === 'a' ? d.b : d.a;
+  $('mgOut').innerHTML = '<div class="row" style="gap:8px;margin-bottom:10px;align-items:stretch">' + boxCard(d.a, mgKeep === 'a', 'a') + boxCard(d.b, mgKeep === 'b', 'b') + '</div>' +
+    '<div class="small" style="text-align:center;margin-bottom:6px">แตะกล่องเพื่อเลือกว่าจะเก็บเลขไหน</div>' +
+    (d.sameBrand ? msgHtml('✓ แบรนด์เดียวกัน (' + d.brands.join(', ') + ') ยุบได้', 'ok') : msgHtml('✕ คนละแบรนด์ (' + d.brands.join(' / ') + ') — 1 กล่องต้องแบรนด์เดียว ยุบไม่ได้', 'bad')) +
+    (d.sameBrand ? (d.sameModel ? msgHtml('ไกด์: มีรุ่นเดียวกันทั้ง 2 กล่อง แนะนำให้ยุบ', 'info') : msgHtml('ไกด์: แบรนด์เดียวกันแต่คนละรุ่น ยุบได้ (ทำหรือไม่ก็ได้)', 'info')) : '') +
+    '<button class="btn deep full" disabled><svg class="i"><use href="#merge"/></svg>ยุบ ' + esc(gone.name) + ' เข้า ' + esc(keep.name) + '</button>' +
+    '<div class="small" style="text-align:center;margin-top:6px">ปุ่มยุบจะใช้ได้เมื่อได้คำสั่งย้ายสินค้าระหว่างชั้นวางของ BigSeller</div>';
+}
+$('mgForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const a = $('mgA').value.trim(), b = $('mgB').value.trim();
+  if (!a || !b) return;
+  loading('mgOut');
+  try { mgLast = await api('/api/merge/check?a=' + encodeURIComponent(a) + '&b=' + encodeURIComponent(b)); mgKeep = 'a'; drawMerge(); }
+  catch (err) { $('mgOut').innerHTML = msgHtml('✕ ' + err.message, 'bad'); }
+};
+$('mgOut').addEventListener('click', (e) => { const c = e.target.closest('[data-keep]'); if (c) { mgKeep = c.dataset.keep; drawMerge(); } });
+
+// 8 เช็กโซนหยิบ → 9 Auto มอบหมาย
+let lastRefill = null;
+async function zoneCheck(name) {
+  name = String(name || '').trim(); if (!name) return;
+  $('zoneMsg').innerHTML = msgHtml('กำลังหาของมาเติมกล่อง ' + name + '…');
+  try {
+    lastRefill = await api('/api/refill?shelf=' + encodeURIComponent(name));
+    $('zoneMsg').innerHTML = msgHtml('✓ กล่อง ' + lastRefill.box.name + ' · หาของมาเติมแล้ว', 'ok');
+    location.hash = 'auto';
+  } catch (e) { $('zoneMsg').innerHTML = msgHtml('✕ ' + e.message, 'bad'); }
+}
+$('zoneForm').onsubmit = (e) => { e.preventDefault(); zoneCheck($('zoneBox').value); };
+function drawAuto() {
+  $('autoWho').innerHTML = '<option>' + esc($('who').textContent) + ' (ตัวเอง)</option>';
+  const d = lastRefill; if (!d) return;
+  $('autoOut').innerHTML = '<div class="card"><div class="small">กล่องว่าง · โซน ' + esc(d.box.zone) + '</div><div class="code" style="font-size:18px">' + esc(d.box.name) + '</div></div>' +
+    (d.plans.length ? d.plans.map(p => '<div class="card" style="padding:8px 12px"><div class="name code">' + esc(p.sku) + '</div><div class="sub">' + esc(p.brand) + '</div>' +
+      (p.from ? '<div class="src pick" style="margin:6px -12px 0"><span class="k">' + esc(p.from[0]) + '</span><div class="info">หยิบจาก <b class="code">' + esc(p.from) + '</b> · มี ' + esc(p.available) + (p.wholeBox ? '<div class="sub">H- ต้องยกทั้งกล่อง: ' + p.wholeBox.map(i => esc(i.sku) + ' ×' + esc(i.qty)).join(', ') + '</div>' : '') + '</div></div>'
+        : '<div class="msg bad">ไม่มีของใน C- · K- · H- → ย้ายไป รอสั่ง แล้ว</div>') + '</div>').join('')
+      : msgHtml('กล่องนี้ไม่มีรายการ SKU ใน BigSeller — ไม่รู้ว่าต้องเติมอะไร', 'bad'));
+}
+
+// 10 รอสั่ง
+async function loadReorder() {
+  loading('roOut');
+  try {
+    const done = segVal('roSeg', 'done') === '1';
+    const list = (await api('/api/reorder')).filter(x => !!x.orderedAt === done);
+    $('roOut').innerHTML = list.length ? list.map(x => '<div class="card"><div class="row between"><span class="name code">' + esc(x.sku) + '</span>' + (done ? '<span class="badge green">สั่งแล้ว ' + fmtDay(x.orderedAt) + '</span>' : '<span class="badge red">หมดทุกโซน</span>') + '</div>' +
+      '<div class="sub" style="margin-top:4px">' + esc(x.brand) + ' · กล่อง ' + esc(x.box) + ' · แจ้งโดย ' + esc(x.by) + ' ' + fmtDay(x.at) + '</div>' +
+      (done ? '' : '<div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn sm" data-ro="' + esc(x.sku) + '">สั่งแล้ว</button></div>') + '</div>').join('')
+      : msgHtml(done ? 'ยังไม่มีรายการที่สั่งแล้ว' : 'ไม่มีของรอสั่ง', 'ok');
+  } catch (e) { $('roOut').innerHTML = msgHtml('✕ ' + e.message, 'bad'); }
+}
+$('roSeg').addEventListener('click', () => setTimeout(loadReorder));
+$('roOut').addEventListener('click', async (e) => { const b = e.target.closest('[data-ro]'); if (!b) return; b.disabled = true; try { await post('/api/reorder/done', { sku: b.dataset.ro }); } catch (err) { alert(err.message); } loadReorder(); });
+
+// โหลดข้อมูลตอนเปิดหน้า (route() เรียก)
+function onPage(p) {
+  if (p === 'backorder') loadBackorders();
+  if (p === 'tasks') loadTasks();
+  if (p === 'reorder') loadReorder();
+  if (p === 'auto') drawAuto();
+}
+
+// ---------- ชั้นวาง: ตัวอย่างชื่อที่จะสร้าง ----------
+function shelfPreview() {
+  const pre = $('shPre').value, a = $('shFrom').value, b = $('shTo').value;
+  const from = parseInt(a, 10), to = parseInt(b, 10), w = Math.max(a.length, b.length);
+  if (!(from >= 0 && to >= from) || to - from > 199) { $('shPreview').textContent = 'เลขไม่ถูก (สร้างได้ครั้งละไม่เกิน 200 ช่อง)'; return; }
+  const name = (n) => pre + String(n).padStart(w, '0');
+  $('shPreview').textContent = 'จะสร้าง ' + (to - from + 1) + ' ช่อง: ' + name(from) + (to > from ? ' … ' + name(to) : '');
+}
+['shPre', 'shFrom', 'shTo'].forEach(id => $(id).oninput = shelfPreview);
+shelfPreview();
+
+// ---------- 5 ค้นหาสต็อก (ของจริง) ----------
+$('fSearch').onsubmit = async (e) => {
+  e.preventDefault();
+  const q = $('q').value.trim();
+  if (!q) return;
+  $('bSearch').disabled = true;
+  $('out').innerHTML = '<div class="small">กำลังค้นใน BigSeller…</div>';
+  try { render(await api('/api/stock?q=' + encodeURIComponent(q))); }
+  catch (err) { $('out').innerHTML = '<div class="msg bad">' + esc(err.message) + '</div>'; }
+  $('bSearch').disabled = false;
+};
+function render(d) {
+  if (!d.skus.length && !d.stock.length) { $('out').innerHTML = '<div class="msg bad">ไม่พบสินค้านี้ใน BigSeller</div>'; return; }
+  const bySku = {};
+  for (const s of d.stock) (bySku[s.sku.toUpperCase()] ||= []).push(s);
+  const skus = d.skus.length ? d.skus : [...new Set(d.stock.map(s => s.sku))].map(sku => ({ sku, title: '', gtins: [] }));
+  $('out').innerHTML = skus.map(s => {
+    const st = bySku[s.sku.toUpperCase()] || [];
+    const avail = st.reduce((a, x) => a + (+x.available || 0), 0);
+    const total = st.reduce((a, x) => a + (+x.total || 0), 0);
+    const known = st.some(x => x.available != null || x.total != null);
+    // ป้าย: ของที่ชั้น "ในบ้าน" (เซิร์ฟเวอร์ส่งมาเป็น selling) = เปิดขายอยู่
+    const selling = st.reduce((a, x) => a + (+x.selling || 0), 0);
+    const badge = !known ? '<span class="badge gold">ไม่รู้จำนวน</span>'
+      : selling > 0 ? '<span class="badge green">✓ เปิดขาย ' + selling + '</span>'
+      : avail > 0 ? '<span class="badge gold">ยังไม่เปิดขาย</span>' : '<span class="badge red">หมด</span>';
+    const shelves = st.flatMap(x => x.shelves.map(h => ({ ...h, wh: x.warehouse })));
+    return '<div class="card"><div class="sku">' + (s.img ? '<img src="' + esc(s.img) + '" alt="">' : '<div class="noimg"></div>') +
+      '<div style="flex:1;min-width:0"><div class="code">' + esc(s.sku) + '</div><div class="small">' + esc(s.title) + '</div>' +
+      (s.gtins.length ? '<div class="small">บาร์โค้ด ' + s.gtins.map(esc).join(', ') + '</div>' : '') + '</div>' + badge + '</div>' +
+      (known ? '<div class="nums"><div class="num"><b>' + total + '</b><span>ทั้งหมด</span></div><div class="num"><b>' + avail + '</b><span>ขายได้</span></div></div>' : '') +
+      (shelves.length ? '<div style="margin-top:10px">' + shelves.map(h => '<div class="shelf' + (+h.qty === 0 ? ' empty' : '') + '"><span><span class="code">' + esc(h.name) + '</span><br><span class="small">' + esc(h.zone ? 'โซน ' + h.zone + ' · ' : '') + esc(h.wh) + '</span></span>' + (+h.qty === 0 ? '<span class="badge red">หมด</span>' : '<b>' + esc(h.qty ?? '–') + '</b>') + '</div>').join('') + '</div>'
+        : '<div class="small" style="margin-top:8px">ไม่มีของในชั้นเก็บ</div>') + '</div>';
+  }).join('');
+}
+
+boot();
+</script>
+</body>
+</html>

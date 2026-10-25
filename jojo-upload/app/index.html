@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f5a3c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="jojo">
+<title>jojo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<!-- จับคู่ครั้งแรก -->
+<section class="pair" id="pair" hidden>
+  <img class="pair-av" src="icon-192.png" alt="">
+  <h1>jojo</h1>
+  <p>ใส่รหัสจับคู่ 6 หลักจากอะตอมมิค<br><small>อะตอมมิค → บัญชี &amp; การล็อกอิน → แอพมือถือ jojo</small></p>
+  <form id="pairForm">
+    <input id="pin" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••">
+    <button class="btn" type="submit">จับคู่</button>
+  </form>
+  <div class="msg" id="pairMsg"></div>
+</section>
+
+<div class="app" id="app" hidden>
+  <header class="top">
+    <img src="avatar.png" alt="">
+    <b>jojo</b>
+    <span class="top-host" id="host"></span>
+  </header>
+
+  <!-- ล็อกออเดอร์: สแกนเลขพัสดุ → สแกนสินค้าให้ครบ → ยืนยัน = ตรวจสอบแล้วใน BigSeller -->
+  <main class="page" id="pgLock">
+    <label class="lbl">เลขพัสดุ (Tracking No.)</label>
+    <form class="search" id="lkTrackForm">
+      <input id="lkTrack" placeholder="สแกน / พิมพ์เลขพัสดุ" autocomplete="off" autocapitalize="characters" enterkeyhint="go">
+      <button class="btn scan" type="button" data-scan="track">📷 สแกน</button>
+    </form>
+    <div id="lkOrder" hidden>
+      <label class="lbl">บาร์โค้ด / SKU สินค้า</label>
+      <form class="search" id="lkItemForm">
+        <input id="lkItem" placeholder="สแกนสินค้าทีละชิ้น" autocomplete="off" autocapitalize="characters" enterkeyhint="go">
+        <button class="btn scan" type="button" data-scan="item">📷 สแกน</button>
+      </form>
+    </div>
+    <div class="note" id="lkMsg"></div>
+    <div id="lkCard"></div>
+    <div class="lk-act" id="lkAct" hidden>
+      <button class="btn lock" id="lkConfirm" type="button" disabled>🔒 ยืนยัน ล็อกออเดอร์</button>
+      <button class="btn ghost" id="lkCancel" type="button">ยกเลิกออเดอร์นี้</button>
+    </div>
+    <div class="lk-log" id="lkLog"></div>
+  </main>
+
+  <!-- เพิ่ม GTIN: สแกนบาร์โค้ด → เลือก SKU → ผูก GTIN ใน BigSeller (ผ่านคอม) -->
+  <main class="page" id="pgGtin" hidden>
+    <label class="lbl">บาร์โค้ด (GTIN) ที่จะเพิ่ม</label>
+    <form class="search" id="gtCodeForm">
+      <input id="gtCode" placeholder="สแกน / พิมพ์บาร์โค้ด" autocomplete="off" autocapitalize="characters" enterkeyhint="go">
+      <button class="btn scan" type="button" data-scan="gtin">📷 สแกน</button>
+    </form>
+    <div class="note" id="gtMsg"></div>
+    <div id="gtOwner"></div>
+    <div id="gtPick" hidden>
+      <label class="lbl">เลือก SKU ที่จะผูกบาร์โค้ดนี้</label>
+      <form class="search" id="gtSkuForm">
+        <input id="gtSku" type="search" placeholder="ค้น SKU / ชื่อสินค้า" autocomplete="off" enterkeyhint="search">
+      </form>
+      <div id="gtList"></div>
+    </div>
+  </main>
+
+  <main class="page" id="pgSku" hidden>
+    <form class="search" id="searchForm">
+      <input id="q" type="search" placeholder="ค้น SKU / บาร์โค้ด / ชื่อสินค้า" autocomplete="off" enterkeyhint="search">
+      <button class="btn scan" type="button" data-scan="sku">📷 สแกน</button>
+    </form>
+    <div class="msg" id="skuMsg"></div>
+    <div id="skuList"></div>
+    <footer class="foot">
+      <span id="skuInfo"></span>
+      <button class="link" id="reload" type="button">⟳ โหลดใหม่จาก BigSeller</button>
+    </footer>
+  </main>
+
+  <main class="page" id="pgCam" hidden>
+    <div class="msg" id="camMsg"></div>
+    <div class="cams" id="camList"></div>
+  </main>
+
+  <!-- ดูกล้องตัวเดียว: สด + ย้อนหลัง -->
+  <section class="cam-view" id="camView" hidden>
+    <header class="cv-top"><button class="link" id="cvBack" type="button">‹ กลับ</button><b id="cvTitle"></b></header>
+    <img class="cv-live" id="cvLive" alt="">
+    <video class="cv-live" id="cvVideo" controls playsinline hidden></video>
+    <div class="cv-bar">
+      <button class="btn small" id="cvLiveBtn" type="button">● ดูสด</button>
+      <input type="date" id="cvDate">
+    </div>
+    <div class="msg" id="cvMsg"></div>
+    <div id="cvClips"></div>
+  </section>
+
+  <!-- กล้องสแกนบาร์โค้ด (กล้องสดเท่านั้น) -->
+  <section class="scanner" id="scanner" hidden>
+    <video id="scanVideo" playsinline muted></video>
+    <div class="scan-box"></div>
+    <div class="scan-bar"><span id="scanMsg">เล็งบาร์โค้ดให้อยู่ในกรอบ</span><button class="btn" id="scanClose" type="button">ปิด</button></div>
+  </section>
+
+  <nav class="tabs">
+    <button class="on" data-pg="pgLock" type="button">🔒<span>ล็อกออเดอร์</span></button>
+    <button data-pg="pgGtin" type="button">🏷️<span>เพิ่ม GTIN</span></button>
+    <button data-pg="pgSku" type="button">🔎<span>สินค้า</span></button>
+    <button data-pg="pgCam" type="button">📹<span>กล้อง</span></button>
+  </nav>
+</div>
+
+<script src="vendor/zxing.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

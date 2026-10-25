@@ -1,0 +1,14 @@
+{
+  "name": "jojo-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "jojo ตัวทดลอง: เซิร์ฟเวอร์ที่ล็อกอิน BigSeller แทนพนักงานแต่ละคน (ไม่ต้องพึ่งอะตอมมิค)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "mock": "set JOJO_MOCK=1&& node server.js"
+  },
+  "dependencies": {
+    "playwright-core": "1.48.2"
+  }
+}
